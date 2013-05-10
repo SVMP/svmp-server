@@ -1,0 +1,199 @@
+//
+// Copyright 2013 The MITRE Corporation, All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this work except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package svmp;
+
+option optimize_for = SPEED;
+option java_package = "org.mitre.svmp.SVMPProtocol.protobuf";
+option java_outer_classname = "SVMPProtobuf";
+
+// Client to server message wrapper
+message Request
+{
+ required RequestType type = 1;
+
+  enum RequestType {
+    USERAUTH      = 0;
+    RAWINPUTPROXY = 1;
+    TOUCHEVENT    = 2;
+    SENSOREVENT   = 3;
+    LOCATION      = 4;
+    INTENT        = 5;
+  }
+
+  optional Authentication authentication = 2;
+  optional Proxy proxy = 3;
+
+  // TODO Move away from raw byte proxying to these
+  optional TouchEvent touch = 4;        // placeholder for future use
+  optional SensorEvent sensor = 5;      // placeholder for future use
+  optional LocationUpdate location = 6; // placeholder for future use
+  optional Intent intent = 7;           // placeholder for future use
+}
+
+// Server to client message wrapper
+message Response
+{
+
+  enum ResponseType {
+    ERROR         = 0; // 'message' should contain a useful error string
+    AUTHOK        = 1;
+    VMREADY       = 2; // 'message' should contain any extra info needed to contact the VM
+    SCREENINFO    = 3; // touch screen coordinate scaling info
+    VIDSTREAMINFO = 4; // IP/Port info for video stream
+    INTENT        = 5; // intent data in 'proxy'
+    NOTIFICATION  = 6; // notification data in 'proxy'
+    GLDATA        = 7; // raw GL stream data in 'proxy'
+    AUDIODATA     = 8; // raw audio stream data in 'proxy'
+  }
+
+  required ResponseType type = 1;
+  optional string message = 2;
+
+  optional Proxy proxy = 3;
+
+  optional Intent intent = 4;               // placeholder for future use
+  optional Notification notification = 5;   // placeholder for future use
+
+  optional ScreenInfo screen_info = 16;	    // placeholder for future use
+  optional VideoStreamInfo video_info = 17; // placeholder for future use
+}
+
+//=====================================================================
+// Raw byte proxying for nested binary protocols
+//=====================================================================
+
+message Proxy
+{
+  enum ServiceType {
+    INPUT  = 0; // to & from input service (touch and sensor events)
+    INTENT = 1; // to & from the intent/notification service
+  }
+
+  //required int32 service = 1;
+  required ServiceType type = 1;
+  optional bytes data = 2;
+}
+
+//=====================================================================
+// Cross platform intent & notification IPC
+//=====================================================================
+
+// C<->S
+message Intent {
+  // TODO
+}
+
+// C<->S
+message Notification {
+  // TODO
+}
+
+//=====================================================================
+// Touch screen
+//=====================================================================
+
+// C->S
+message TouchEvent {
+  required int32 action = 1;
+  repeated PointerCoords items = 2;
+
+  message PointerCoords {
+    required int32 id = 1;
+    required float x = 2;
+    required float y = 3;
+  }
+}
+
+// S->C
+message ScreenInfo {
+  required int32 x = 1;
+  required int32 y = 2;
+}
+
+//=====================================================================
+// Sensors
+//=====================================================================
+
+enum SensorType {
+  ACCELEROMETER       = 1;
+  MAGNETIC_FIELD      = 2;
+  ORIENTATION         = 3;
+  GYROSCOPE           = 4;
+  LIGHT               = 5;
+  PRESSURE            = 6;
+  TEMPERATURE         = 7;
+  PROXIMITY           = 8;
+  GRAVITY             = 9;
+  LINEAR_ACCELERATION = 10;
+  ROTATION_VECTOR     = 11;
+  RELATIVE_HUMIDITY   = 12;
+  AMBIENT_TEMPERATURE = 13;
+}
+
+// C->S: Sensor update event
+message SensorEvent {
+  required SensorType type = 1;
+  required int32 accuracy  = 2;
+  required int64 timestamp = 3;
+  repeated float values = 4;
+}
+
+// S->C: Sensor subscribe request, or update existing subscription
+message SensorSubscribe {
+  required SensorType type = 1;
+  optional int32 frequency = 2; // update frequency in Hz
+}
+
+// S->C: Unsubscribe from sensor update feed
+message SensorUnsubscribe {
+  required SensorType type = 1;
+}
+
+//=====================================================================
+// Location
+//=====================================================================
+
+// C->S: Location update event
+message LocationUpdate {
+  // lat, long, error circle?
+  // TODO
+}
+
+// S->C: Location subscribe request
+message LocationSubscribe {
+  // allow for one-off request or long term subscribe
+  // 
+  // single request/response, subscribe and push,
+  // push frequency, coarse vs. fine grained, etc.
+  // TODO
+}
+
+//=====================================================================
+// Other
+//=====================================================================
+
+message Authentication {
+  required string un = 1;
+  required string pw = 2;
+}
+
+// S->C
+message VideoStreamInfo {
+  // ip, port, path, the SDP contents directly, etc.
+  // what parameters are not constants and can't be hard coded?
+  // TODO
+}
+

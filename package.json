@@ -1,0 +1,13 @@
+{
+    "name": "node_svmp_proxy",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "start": "node app.js",
+        "test": "./node_modules/.bin/nodeunit test"
+    },
+    "dependencies": {
+        "protobuf": "latest",
+        "nodeunit": "latest"
+    }
+}
