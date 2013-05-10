@@ -1,9 +1,30 @@
 
 h2. Node SVMP Proxy
 
-h3. Install
-    # Install Node.js
-    # Install NPM
-    # Run 'npm install'
+Serves as a basic TCP proxy between Android devices and Android VMs running in the cloud.  Handles authentication and
+proxying messages.
 
-h3. Run
+h3. Setup
+
+    # Install "Node.js":http://nodejs.org
+    # Run 'npm install' from within the node_svmp_proxy directory
+
+h3. Configuration
+
+    * Server Port number: You can change it in the config/config.js file. Default is 8001
+    * Adding users for **testing/demos** : Add or change the values in users/db.js.
+
+h3.  Run it
+
+<pre>
+<code>
+ >> node app.js
+</code>
+</pre>
+
+
+h3. What's next?
+
+    * Mongodb and UI for user/vm management
+    * Openstack integration
+    * TLS
