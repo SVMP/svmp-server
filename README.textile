@@ -23,6 +23,14 @@ h3.  Run it
 </pre>
 
 
+h3. Run tests
+
+<pre>
+<code>
+ >> npm test
+</code>
+</pre>
+
 h3. What's next?
 
     * Mongodb and UI for user/vm management
