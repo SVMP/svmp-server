@@ -2,12 +2,24 @@
     "name": "node_svmp_proxy",
     "version": "0.0.1",
     "private": true,
+    "author": "Dave Bryson",
+    "engines": {
+        "node": "0.10.2",
+        "npm": "1.2"
+    },
     "scripts": {
         "start": "node app.js",
         "test": "./node_modules/.bin/nodeunit test"
     },
     "dependencies": {
         "protobuf": "latest",
-        "nodeunit": "latest"
+        "nodeunit": "latest",
+        "vows": "latest",
+        "mongoose": "latest",
+        "express": "latest",
+        "jade": "latest",
+        "passport": "latest",
+        "passport-local": "latest",
+        "connect-flash": "latest"
     }
 }

@@ -1,0 +1,32 @@
+extends layouts/main
+
+block content
+
+  .row
+    .span7
+      h2 Add a User
+      hr
+      p= message
+      form.form-horizontal(method="post", action='/users', enctype="multipart/form-data")
+        .control-group
+          label.control-label(for='username') Username:&nbsp;
+          .controls
+          input#username.input-large(type='text', name="username", value=user.username, placeholder='Enter Username')
+        .control-group
+          label.control-label(for='password') Password:&nbsp;
+          .controls
+          input#password.input-large(type='text', name="password", value=user.password, placeholder='Enter Password')
+        .control-group
+          label.control-label(for='vminstance_ip') VM IP:&nbsp;
+          .controls
+          input#vminstance_ip.input-large(type='text', name="vminstance_ip", value=user.vminstance_ip, placeholder='Enter VM IP')
+        .control-group
+          label.control-label(for='vminstance_port') VM Port:&nbsp;
+          .controls
+          input#vminstance_port.input-large(type='text', name="vminstance_port", value=user.vminstance_port, placeholder='Enter VM Port')
+
+
+        .form-actions
+          button.btn.btn-primary(type='submit') Save
+          &nbsp;
+          a.btn(href='/users', title="cancel") Cancel

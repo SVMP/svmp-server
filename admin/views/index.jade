@@ -1,0 +1,23 @@
+extends layouts/main
+
+block content
+  h2 Users List
+
+  table.table.table-striped.table-bordered
+    thead
+      th Username
+      th VM IP
+      th VM Port
+      th SVMP Admin?
+      th &nbsp;
+    tbody
+      each u in users
+        tr
+          td #{u.username}
+          td #{u.vminstance_ip}
+          td #{u.vminstance_port}
+          td #{u.isAdmin()}
+          td
+            a.btn.btn-mini(href='/users/delete/#{u.id}', title="Delete User") Delete User
+
+  a.btn.btn-success(href='/users/new', title="Add a User") Add a User

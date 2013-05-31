@@ -1,0 +1,13 @@
+extends layouts/main
+
+block content
+  #flash
+    p= message
+
+  form(action='/user/session',method='post').form-signin.css-form
+    h2.form-signin-heading Please sign in
+    input(type="text", name="username")
+    br
+    input(type="password", name="password")
+    br
+    button(type="submit").btn.btn-large.btn-primary Sign In
