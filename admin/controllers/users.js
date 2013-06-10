@@ -24,6 +24,7 @@ exports.list = function (req, res) {
 
 exports.new = function (req, res) {
     res.render('new', {user: new User({}), message: ''});
+    //res.render('new');
 };
 
 /**

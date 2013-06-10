@@ -2,11 +2,21 @@
 
 var path = require('path');
 
+
+function requiresAdmin(req, res, next) {
+    if (req.isAuthenticated() && req.user.admin) {
+        next();
+    } else {
+        req.flash('error', 'Login required with proper credentials');
+        res.redirect('/login');
+    }
+}
+
 /**
  * Application routes
  * @param app Express app
  */
-module.exports = function (app, passport, auth) {
+module.exports = function (app, passport) {
 
     // Services
     var users = require('../admin/controllers/users'),
@@ -25,20 +35,20 @@ module.exports = function (app, passport, auth) {
         res.redirect('/login');
     });
     // Login in user and establish session
-    app.post('/user/session', passport.authenticate('local', {failureRedirect: '/login'}),
+    app.post('/user/session', passport.authenticate('local', {failureRedirect: '/login', failureFlash: 'Invalid username or password.'}),
         function (req, res) {
             res.redirect('/users');
         });
 
 
     // Users Controller
-    app.get('/users', auth.requiresLogin, auth.requiresAdmin, users.list);
-    //app.get('/users/:id', auth.requiresLogin, auth.requiresAdmin, users.show);
-    app.get('/users/new', auth.requiresLogin, auth.requiresAdmin, users.new);
-    app.post('/users', auth.requiresLogin, auth.requiresAdmin, users.add);
+    app.get('/users', requiresAdmin, users.list);
+    //app.get('/users/:id', requiresAdmin, users.show);
+    app.get('/users/new', requiresAdmin, users.new);
+    app.post('/users', requiresAdmin, users.add);
     //app.post('/users/:id', users.update);
 
     // THIS SHOULD BE A DELETE VERB!
-    app.get('/users/delete/:id', auth.requiresLogin, auth.requiresAdmin, users.remove);
+    app.get('/users/delete/:id', requiresAdmin, users.remove);
 
 };

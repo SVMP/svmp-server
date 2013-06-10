@@ -2,6 +2,6 @@
 
 
 exports.login = function (req, res) {
-    res.render('login', {message: req.flash('info')});
+    res.render('login', {message: req.flash('error')});
 };
 

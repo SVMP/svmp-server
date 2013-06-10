@@ -3,7 +3,7 @@ var express = require('express'),
     config = require('./config/config')[env],
     app = express(),
     mongoose = require('mongoose'),
-    auth = require('./lib/authentication'),
+    //auth = require('./lib/authentication'),
     passport = require('passport');
 
 // Setup db connection
@@ -16,7 +16,7 @@ require('./config/passport')(passport, config);
 // Setup Express
 require('./config/express')(app, config, passport);
 // Load the routes
-require('./config/routes')(app, passport, auth);
+require('./config/routes')(app, passport);
 
 // Go
 app.listen(config.admin_port);
