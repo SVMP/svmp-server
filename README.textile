@@ -38,7 +38,4 @@ h3. Run the User Admin Server
 </code>
 </pre>
 
-h3. What's next?
 
-    * Openstack integration
-    * TLS
