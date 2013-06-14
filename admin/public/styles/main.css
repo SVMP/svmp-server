@@ -1,11 +1,3 @@
-/* Will be compiled down to a single stylesheet with your sass files */
-/*body {
-    margin: 0;
-    color: #1f1f1f;
-    overflow-y: scroll;
-    font-family: 'Source Sans Pro', 'Trebuchet MS', sans-serif;
-    font-weight: normal;
-}*/
 body{
     padding-top: 10px;
 }

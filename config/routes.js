@@ -1,3 +1,21 @@
+/*
+ * Copyright 2013 The MITRE Corporation, All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this work except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * author Dave Bryson
+ *
+ */
 'use strict';
 
 var path = require('path');
@@ -22,11 +40,10 @@ module.exports = function (app, passport) {
     var users = require('../admin/controllers/users'),
         home = require('../admin/controllers/home');
 
-
-    // Home page
-    app.get('/', function (req, res) {
-        res.redirect('/users');
+    app.get('/', requiresAdmin, function (req, res) {
+        res.render('index');
     });
+
     // Login Form
     app.get('/login', home.login);
     // Logout
@@ -37,18 +54,33 @@ module.exports = function (app, passport) {
     // Login in user and establish session
     app.post('/user/session', passport.authenticate('local', {failureRedirect: '/login', failureFlash: 'Invalid username or password.'}),
         function (req, res) {
-            res.redirect('/users');
+            //res.redirect('/users');
+            res.redirect('/');
         });
 
 
-    // Users Controller
-    app.get('/users', requiresAdmin, users.list);
-    //app.get('/users/:id', requiresAdmin, users.show);
-    app.get('/users/new', requiresAdmin, users.new);
-    app.post('/users', requiresAdmin, users.add);
-    //app.post('/users/:id', users.update);
+    // Users API
 
-    // THIS SHOULD BE A DELETE VERB!
-    app.get('/users/delete/:id', requiresAdmin, users.remove);
+    // List Users
+    app.get('/users', requiresAdmin, users.list);
+    // Get User by ID
+    app.get('/users/:id', requiresAdmin, users.show);
+    // Add a new User
+    app.post('/users', requiresAdmin, users.add);
+    // Update User
+    app.post('/users/:id', requiresAdmin, users.update);
+    // Delete User
+    app.delete('/users/:id', requiresAdmin, users.remove);
+
+    app.post('/users/change', requiresAdmin, users.change_password);
+
+    // Handle Errors
+    app.use(function (err, req, res, next) {
+        res.render('500');
+    });
+
+    app.use(function (req, res) {
+        res.render('404', "Not Found");
+    });
 
 };

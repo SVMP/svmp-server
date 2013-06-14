@@ -18,15 +18,30 @@
  */
 'use strict';
 
-var net = require('net');
-var env = process.env.NODE_ENV || 'development';
-var config = require('./config/config')[env];
+var net = require('net'),
+    tls = require('tls'),
+    fs = require('fs'),
+    env = process.env.NODE_ENV || 'development',
+    config = require('./config/config')[env],
+    mongoose = require('mongoose');
+
+// Setup db connection
+mongoose.connect(config.db);
+
+// Load model
+require('./lib/user');
 var proxy = require('./lib/proxy');
 
+var tls_options = {
+    key: fs.readFileSync('./tls/private-key.pem'),
+    cert: fs.readFileSync('./tls/public-cert.pem')
+};
 
-
-var server = net.createServer(function (proxySocket) {
+function onConnection(proxySocket) {
     proxy.proxyConnection(proxySocket);
-});
+}
+
+var server = config.tls_proxy ? tls.createServer(tls_options, onConnection) : net.createServer(onConnection);
 server.listen(config.port);
-console.log("Proxy running on port", config.port);
+console.log("Proxy running on port", config.port, " TLS? ", config.tls_proxy);
+
