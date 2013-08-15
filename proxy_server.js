@@ -27,6 +27,10 @@ var net = require('net'),
 
 // Setup db connection
 mongoose.connect(config.db);
+mongoose.connection.on('error',function(err) {
+	console.log('STOPPING Proxy. Unable to connect to MongoDB. Is it running?');
+	process.exit(1);
+})
 
 // Load model
 require('./lib/user');
@@ -43,5 +47,5 @@ function onConnection(proxySocket) {
 
 var server = config.tls_proxy ? tls.createServer(tls_options, onConnection) : net.createServer(onConnection);
 server.listen(config.port);
-console.log("Proxy running on port", config.port, " TLS? ", config.tls_proxy);
+console.log("Proxy running on port", config.port, " Using TLS? : ", config.tls_proxy);
 

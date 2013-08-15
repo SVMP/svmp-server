@@ -32,9 +32,13 @@ function SimClient() {
     client.on('data', function (data) {
         var resp = proto.readResponse(data);
         console.log("GOT: ", resp);
-        /*if (resp.type === 'VMREADY') {
-         proto.writeRequest({type: 'RAWINPUTPROXY', proxy: {type: 'INPUT'}}, client);
-         }*/
+        if (resp.type === 'VMREADY') {
+            proto.writeRequest({type: 'VIDEO_PARAMS'}, client);
+            console.log("Send VIDEO request");
+        }
+        if(resp.type === 'VIDSTREAMINFO') {
+            console.log("GOT STREAM INFO")
+        }
     });
     client.on('error', function (err) {
         console.log("GOT ERROR: ", err);

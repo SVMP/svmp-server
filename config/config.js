@@ -32,5 +32,16 @@ module.exports = {
         admin_port: 8005,
         admin_root: require('path').normalize(__dirname + '/..'),
         tls_proxy: false
+    },
+    
+    vmprovider: {
+        provider: 'openstack',
+        username: 'myusername'
+    },
+    // Video Information sent from Proxy to Client
+    webrtc: {
+        ice: { iceServer: [{url: 'stun1234'}]},
+        video: { audio: true, video: { mandatory: {}, optional: []}},
+        pc: {optional: [{DtlsSrtpKeyAgreement: true}]}
     }
 };
