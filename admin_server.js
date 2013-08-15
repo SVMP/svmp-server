@@ -39,4 +39,4 @@ require('./config/routes')(app, passport);
 
 // Go
 app.listen(config.admin_port);
-console.log('Admin Server running at http://localhost:' + config.admin_port + '/');
+console.log('Admin Server running on port:' + config.admin_port + '/');

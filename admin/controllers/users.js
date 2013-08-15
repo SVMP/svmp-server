@@ -68,6 +68,12 @@ exports.show = function (req, res) {
  */
 exports.add = function (req, res) {
     var user = new User(req.body);
+
+    /**
+     * Create VM for user here using Promises
+     */ 
+
+     
     user.save(function (err, newuser) {
         if (err) {
             // 11000 is dup record
