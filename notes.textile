@@ -1,0 +1,6 @@
+
+h3. Todo
+
+	# Separate admin server from proxy
+	# Separate admin users from proxy users inlist
+	# API for user info and proxy authentication 
