@@ -8,17 +8,12 @@
         "npm": "1.2"
     },
     "scripts": {
-        "start": "node proxy_server.js"
+        "start": "node proxy.js"
     },
     "dependencies": {
         "protobuf": "latest",
-        "mongoose": "latest",
-        "express": "latest",
-        "jade": "latest",
-        "passport": "latest",
-        "passport-local": "latest",
-        "connect-flash": "latest",
         "q": "latest",
-        "pkgcloud": "latest"
+        "request": "latest",
+        "mocha": "latest"
     }
 }

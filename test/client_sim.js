@@ -4,7 +4,7 @@ var net = require('net'),
     tls = require('tls'),
     fs = require('fs'),
     env = process.env.NODE_ENV || 'development',
-    config = require('../config/config')[env],
+    config = require('../config/config').settings,
     proto = require('../lib/protocol');
 
 function SimClient() {

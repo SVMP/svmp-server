@@ -19,28 +19,12 @@
 'use strict';
 
 module.exports = {
-    development: {
-        db: 'mongodb://localhost/svmp_dev',
+    settings: {
         port: 8001,
-        admin_port: 8005,
-        admin_root: require('path').normalize(__dirname + '/..'),
-        tls_proxy: false
+        tls_proxy: false,
+        auth_server: "http://localhost:8080/api/authenticate",
+        vm_port: 5000
     },
-    production: {
-        db: 'mongodb://localhost/svmp_production',
-        port: 8001,
-        admin_port: 8005,
-        admin_root: require('path').normalize(__dirname + '/..'),
-        tls_proxy: false
-    },
-
-    vmserviceport: 5000,
-    
-    vmprovider: {
-        provider: 'openstack',
-        username: 'myusername'
-    },
-    
     // Video Information sent from Proxy to Client
     webrtc: {
         ice: { iceServer: [{url: 'stun1234'}]},

@@ -34,6 +34,7 @@ message Request
     VIDEO_START   = 7;
     VIDEO_STOP    = 8;
     WEBRTC        = 9;
+    ROTATION_INFO = 10;
   }
 
   optional Authentication authentication = 2;
@@ -45,6 +46,7 @@ message Request
   optional Intent intent = 7;
 
   optional WebRTCMessage webrtcMsg = 9;
+  optional RotationInfo rotationInfo = 10;
 }
 
 // Server to client message wrapper
@@ -289,6 +291,7 @@ message LocationResponse {
 message Authentication {
   required string un = 1;
   required string pw = 2;
+  optional string secureid = 3;
 }
 
 // C->S
@@ -348,4 +351,16 @@ message VideoStreamInfo {
   optional string iceServers = 1;
   optional string pcConstraints = 2;
   optional string videoConstraints = 3;
+}
+
+//=====================================================================
+// Rotation Information
+//=====================================================================
+
+// we can't rely on sensor data to accurately trigger screen rotations
+// instead, we send a message from the client to do so
+
+// C->S
+message RotationInfo  {
+  required int32 rotation = 1;
 }

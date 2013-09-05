@@ -18,25 +18,23 @@
  */
 'use strict';
 
-var express = require('express'),
-    env = process.env.NODE_ENV || 'development',
-    config = require('./config/config')[env],
-    app = express(),
-    mongoose = require('mongoose'),
-    passport = require('passport');
+var net = require('net'),
+    tls = require('tls'),
+    fs = require('fs'),
+    config = require('./config/config').settings,
 
-// Setup db connection
-mongoose.connect(config.db);
+var proxy = require('./lib/proxy');
 
-// Load model
-require('./lib/user');
-// Load Passport
-require('./config/passport')(passport, config);
-// Setup Express
-require('./config/express')(app, config, passport);
-// Load the routes
-require('./config/routes')(app, passport);
+var tls_options = {
+    key: fs.readFileSync('./tls/private-key.pem'),
+    cert: fs.readFileSync('./tls/public-cert.pem')
+};
 
-// Go
-app.listen(config.admin_port);
-console.log('Admin Server running on port:' + config.admin_port + '/');
+function onConnection(proxySocket) {
+    proxy.proxyConnection(proxySocket);
+}
+
+var server = config.tls_proxy ? tls.createServer(tls_options, onConnection) : net.createServer(onConnection);
+server.listen(config.port);
+console.log("Proxy running on port", config.port, " Using TLS? : ", config.tls_proxy);
+

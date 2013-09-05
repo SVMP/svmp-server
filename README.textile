@@ -2,40 +2,29 @@
 h2. Node SVMP Proxy
 
 Serves as a basic TCP proxy between Android devices and Android VMs running in the cloud.  Handles authentication and
-proxying messages. Includes Web UI for User adminstration
+proxying messages. 
 
-h3. Setup
+h3. Install
 
     # Install "Node.js":http://nodejs.org
     # Install "MongoDB":http://www.mongodb.org/downloads
-    # Run 'npm install' from within the node_svmp_proxy directory
+    # Run 'npm install' from within this directory
 
 h3. Configuration
 
     * Proxy Server Port number: You can change it in the config/config.js file. Default is 8001
     * User Admin Server Port number: You can change it in the config/config.js file. Default is 8005
 
-h3. Setup
-
-    * Start mongodb
-    * Run the 'utils/load_test_data.js' script to create a default admin user for the Web UI. Change the default admin
-      password via the web ui!
-
 h3.  Run the Proxy Server
+	
+	* Start Mongodb
 
 <pre>
 <code>
- >> node proxy_server.js
+ >> node proxy.js
 </code>
 </pre>
 
 
-h3. Run the User Admin Server
-
-<pre>
-<code>
- >> node admin_server.js
-</code>
-</pre>
 
 
