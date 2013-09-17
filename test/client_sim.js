@@ -25,7 +25,7 @@ function SimClient() {
         });
     } else {
         client = net.connect(8001, function () {
-            proto.writeRequest({type: 'USERAUTH', authentication: {un: 'dave', pw: 'dave',  secureid: '123'}}, client);
+            proto.writeRequest({type: 'USERAUTH', authentication: {un: 'svmpuser1', pw: 'svmptest',  secureid: '123'}}, client);
         });
     }
 
