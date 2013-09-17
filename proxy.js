@@ -22,13 +22,14 @@ var net = require('net'),
     tls = require('tls'),
     fs = require('fs'),
     config = require('./config/config').settings,
+	proxy = require('./lib/proxy');
 
-var proxy = require('./lib/proxy');
-
-var tls_options = {
-    key: fs.readFileSync('./tls/private-key.pem'),
-    cert: fs.readFileSync('./tls/public-cert.pem')
-};
+if(config.tls_proxy) {
+	var tls_options = {
+    		key: fs.readFileSync('./tls/private-key.pem'),
+    		cert: fs.readFileSync('./tls/public-cert.pem')
+		};
+}
 
 function onConnection(proxySocket) {
     proxy.proxyConnection(proxySocket);

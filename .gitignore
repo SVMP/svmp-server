@@ -2,3 +2,4 @@
 .idea
 node_modules
 TODO.txt
+config/config-local.js
