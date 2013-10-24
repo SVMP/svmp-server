@@ -1,19 +1,23 @@
 {
-    "name": "node_svmp_proxy",
-    "version": "0.0.1",
-    "private": true,
-    "author": "Dave Bryson",
-    "engines": {
-        "node": "0.10.2",
-        "npm": "1.2"
-    },
-    "scripts": {
-        "start": "node proxy.js"
-    },
-    "dependencies": {
-        "protobuf": "latest",
-        "q": "latest",
-        "request": "latest",
-        "mocha": "latest"
-    }
+  "name": "node_svmp_proxy",
+  "version": "0.0.2",
+  "private": true,
+  "author": "Dave Bryson",
+  "engines": {
+    "node": "0.10.2",
+    "npm": "1.2"
+  },
+  "scripts": {
+    "start": "node proxy.js"
+  },
+  "dependencies": {
+    "protobuf": "latest",
+    "q": "latest",
+    "request": "latest",
+    "uid2": "latest",
+    "mongoose": "latest"
+  },
+  "devDependencies": {
+    "mocha": "latest"
+  }
 }

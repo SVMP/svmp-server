@@ -289,16 +289,10 @@ message LocationResponse {
 //=====================================================================
 
 message Authentication {
-  required string username             = 1;
-  repeated AuthenticationEntry entries = 2;
-  optional string sessionToken         = 3;
+  required string un = 1;
+  required string pw = 2;
+  optional string secureid = 3;
 }
-
-message AuthenticationEntry {
-  required string key  = 1;
-  required bytes value = 2;
-}
-
 
 // C->S
 message VideoRequest {

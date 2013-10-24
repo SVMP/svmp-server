@@ -20,19 +20,39 @@
 
 var net = require('net'),
     tls = require('tls'),
+    mongoose = require('mongoose'),
     fs = require('fs'),
     config = require('./config/config').settings,
-	proxy = require('./lib/proxy');
+    proxy = require('./lib/proxy'),
+    auth = require('./lib/authentication');
 
 if(config.tls_proxy) {
-	var tls_options = {
-    		key: fs.readFileSync('./tls/private-key.pem'),
-    		cert: fs.readFileSync('./tls/public-cert.pem')
-		};
+    var tls_options = {
+    	key: fs.readFileSync('./tls/private-key.pem'),
+    	cert: fs.readFileSync('./tls/public-cert.pem')
+    };
 }
 
+mongoose.connect(config.db);
+
+/**
+ * Example authentication callback function
+ * User for testing
+ */
+function testAuth(reqObj,callback) {
+    var un = reqObj.username;
+    var pw = reqObj.password;
+    if(un === 'dave' && pw === 'dave') {
+        callback(undefined,{username: un});
+    } else {
+        callback('Login failure');
+    }
+}
+
+
 function onConnection(proxySocket) {
-    proxy.proxyConnection(proxySocket);
+    var gateGuard = new auth.Authentication(testAuth);
+    proxy.proxyConnection(proxySocket,gateGuard);
 }
 
 var server = config.tls_proxy ? tls.createServer(tls_options, onConnection) : net.createServer(onConnection);

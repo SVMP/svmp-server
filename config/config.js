@@ -18,17 +18,19 @@
  */
 'use strict';
 var local = require('./config-local');
+var TTL = 5*60; // Currently 5 mins for testing
+local.settings.session_timeout = TTL;
 module.exports = local;
 /**
  * Expects a file named config-local.js in this directory with the following
  * format:
  *module.exports = {
     settings: {
+        db: 'mongodb://localhost/svmp_proxy_db',
         port: 8001,
         tls_proxy: false,
-        auth_server: "http://localhost:8080/api/authenticate",
         vm_port: 5000,
-        apikey: ''
+        test_db: 'mongodb://localhost/proxy_testing_db'
     },
     // Video Information sent from Proxy to Client
     webrtc: {

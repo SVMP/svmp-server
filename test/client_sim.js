@@ -8,36 +8,36 @@ var net = require('net'),
     proto = require('../lib/protocol');
 
 function SimClient() {
-    var client;
-    if (config.tls_proxy) {
-        var options = {
-            key: fs.readFileSync('../tls/private-key.pem'),
-            cert: fs.readFileSync('../tls/public-cert.pem')
+    var client = net.connect(config.port, function () {
+        var authMsg = { type: 'USERAUTH', 
+                        authentication: {username: "dave", 
+                            entries: [{key:'password', value:'dave'}, 
+                                      {key: 'sessionToken', value: ''},
+                                      {key: 'testing', value: 'true'}
+                            ]
+                        } 
         };
-        client = tls.connect(config.port, 'localhost', options, function () {
-            if (client.authorized) {
-                console.log("Connection authorized by a Certificate Authority.");
-                proto.writeRequest({type: 'USERAUTH', authentication: {un: 'dave', pw: 'dave'}}, client);
-            } else {
-                console.log("Connection not authorized: " + conn.authorizationError);
-            }
-            proto.writeRequest({type: 'USERAUTH', authentication: {un: 'dave', pw: 'dave'}}, client);
-        });
-    } else {
-        client = net.connect(8001, function () {
-            proto.writeRequest({type: 'USERAUTH', authentication: {un: 'svmpuser1', pw: 'svmptest',  secureid: '123'}}, client);
-        });
-    }
-
+        console.log("Connected...");
+        proto.sendRequest( authMsg, client);
+    });
+    
     client.on('data', function (data) {
         var resp = proto.readResponse(data);
-        console.log("GOT: ", resp);
+
+        if( resp.type === 'AUTHOK') {
+            console.log("Got AUTH OK.  SID: ", resp.message);
+        }
+
         if (resp.type === 'VMREADY') {
-            proto.writeRequest({type: 'VIDEO_PARAMS'}, client);
-            console.log("Send VIDEO request");
+            console.log("Got VMREADY: ", resp.message);
+            proto.sendRequest({type: 'VIDEO_PARAMS'}, client);
         }
         if(resp.type === 'VIDSTREAMINFO') {
-            console.log("GOT STREAM INFO")
+            console.log("GOT STREAM INFO, Rett 2 go...: ", resp.videoInfo);
+        }
+
+        if( resp.type === 'ERROR') {
+            console.log("Error message: ", resp.message);
         }
     });
     client.on('error', function (err) {
