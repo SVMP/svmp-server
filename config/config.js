@@ -30,7 +30,13 @@ module.exports = local;
         port: 8001,
         tls_proxy: false,
         vm_port: 5000,
-        test_db: 'mongodb://localhost/proxy_testing_db'
+        test_db: 'mongodb://localhost/proxy_testing_db',
+        openstack: {"authUrl": "http://", 
+                    "username": "test", 
+                    "password": "test",
+                    "tenantId": "eee",
+                    "tenantName": "hello" },
+        pam: {}
     },
     // Video Information sent from Proxy to Client
     webrtc: {

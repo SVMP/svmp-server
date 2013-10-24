@@ -47,12 +47,20 @@ describe("Authentication/Session logic spec", function() {
         });
     });
 
-    it('should create one user', function(done) {
-        users.listUsers().then( function(all) {
-            var size = all.length;
+    it('should contain one user', function(done) {
+        users.listUsers(function(err, r) {
+            assert.ok(r);
+            var size = r.length;
             assert.equal(size, 1);
-        }).then(done).fail(done);
+            done();
+        });
+
+        //users.listUsers().then( function(all) {
+        //    var size = all.length;
+        //    assert.equal(size, 1);
+        //}).then(done).fail(done);
     });
+    
 
     it('should pass authentication creating a new session', function(done) {
         var obj = {username: 'dave', password: 'dave', sessionToken: ''};

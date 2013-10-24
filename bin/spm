@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+
+// SVMP Proxy Manager
+require('../lib/cli');

@@ -15,7 +15,11 @@
     "q": "latest",
     "request": "latest",
     "uid2": "latest",
-    "mongoose": "latest"
+    "mongoose": "latest",
+    "commander": "latest",
+    "colors": "latest",
+    "pkgcloud": "latest",
+    "authenticate-pam": "latest"
   },
   "devDependencies": {
     "mocha": "latest"
