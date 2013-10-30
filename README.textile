@@ -12,31 +12,32 @@ h3. Install
 h3. Configuration
 	* Create a file named 'config-local.js' in the config directory.
 	* Add the following code to the config-local.js file:
-	<pre>
-		<code>
-			module.exports = {
-    			settings: {
-        		db: 'mongodb://localhost/svmp_proxy_db',
-        		port: 8001,
-        		tls_proxy: false,
-        		vm_port: 5000,
-        		test_db: 'mongodb://localhost/proxy_testing_db',
-        		openstack: {"authUrl": "http://", 
-                    		"username": "test", 
-                    		"password": "test",
-                    		"tenantId": "eee",
-                    		"tenantName": "hello" },
-        		pam: {service: '', remotehost: ''}
-    		},
-    		// Video Information sent from Proxy to Client
-    		webrtc: {
-        		ice: { iceServer: [{url: 'stun1234'}]},
-        		video: { audio: true, video: { mandatory: {}, optional: []}},
-        		pc: {optional: [{DtlsSrtpKeyAgreement: true}]}
-    		}
-			};
-		</code>	
-	</pre>
+
+<pre>
+	<code>
+	module.exports = {
+    	settings: {
+        	db: 'mongodb://localhost/svmp_proxy_db',
+        	port: 8001,
+        	tls_proxy: false,
+        	vm_port: 5000,
+        	test_db: 'mongodb://localhost/proxy_testing_db',
+        	openstack: {"authUrl": "http://", 
+                   		"username": "test", 
+                   		"password": "test",
+                   		"tenantId": "eee",
+                   		"tenantName": "hello" },
+        	pam: {service: '', remotehost: ''}
+    	},
+    	// Video Information sent from Proxy to Client
+    	webrtc: {
+        	ice: { iceServer: [{url: 'stun1234'}]},
+        	video: { audio: true, video: { mandatory: {}, optional: []}},
+        	pc: {optional: [{DtlsSrtpKeyAgreement: true}]}
+    	}
+	};
+	</code>	
+</pre>
 
 	Make sure to set the proper setting in the fields (openstack,pam, etc...)
 
@@ -44,20 +45,23 @@ h3.  Running the Proxy Server
 	
 	* Start Mongodb 
 	* Start the proxy
-		<pre>
-		<code>
- 			>> node proxy.js
-		</code>
-		</pre>
+
+<pre>
+	<code>
+ 		>> node proxy.js
+	</code>
+</pre>
 
 h3. Adding Users and VMs.
 	
 	Run the commandline client from the root directory of the project:
-	<pre>
-		<code>
- 			>> ./bin/spm -h
-		</code>
-	</pre>
+	
+<pre>
+	<code>
+ 		>> ./bin/spm -h
+	</code>
+</pre>
+	
 	Run the help command to see a list of all commands
 
 
