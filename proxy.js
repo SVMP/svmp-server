@@ -24,7 +24,8 @@ var net = require('net'),
     fs = require('fs'),
     config = require('./config/config').settings,
     proxy = require('./lib/proxy'),
-    auth = require('./lib/authentication');
+    auth = require('./lib/authentication'),
+    pam = require('./lib/pam-auth-plugin');
 
 if(config.tls_proxy) {
     var tls_options = {
@@ -51,7 +52,17 @@ function testAuth(reqObj,callback) {
 
 
 function onConnection(proxySocket) {
-    var gateGuard = new auth.Authentication(testAuth);
+    // Examples of using plugin authentication functions
+
+    // Example using the test function above
+    //var gateGuard = new auth.Authentication(testAuth);
+
+    // Example using the built in username/password in DB. Will set as default
+    var gateGuard = new auth.Authentication();
+
+    // Using PAM
+    //var gateGuard = new auth.Authentication(pam.pamAuthentication);
+    
     proxy.proxyConnection(proxySocket,gateGuard);
 }
 

@@ -36,7 +36,7 @@ module.exports = local;
                     "password": "test",
                     "tenantId": "eee",
                     "tenantName": "hello" },
-        pam: {}
+        pam: {service: '', remotehost: ''}
     },
     // Video Information sent from Proxy to Client
     webrtc: {
