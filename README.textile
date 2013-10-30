@@ -10,6 +10,7 @@ h3. Install
     # Run 'npm install' from within this directory
 
 h3. Configuration
+
 	* Create a file named 'config-local.js' in the config directory.
 	* Add the following code to the config-local.js file:
 
