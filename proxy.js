@@ -33,6 +33,8 @@ if(config.tls_proxy) {
     };
 }
 
+// If you change this - change the call in cli.js as well
+// ... yea this should simplified ...
 mongoose.connect(config.db);
 
 /**
