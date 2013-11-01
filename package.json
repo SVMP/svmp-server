@@ -13,7 +13,6 @@
   "dependencies": {
     "protobuf": "latest",
     "q": "latest",
-    "request": "latest",
     "uid2": "latest",
     "mongoose": "latest",
     "commander": "latest",
