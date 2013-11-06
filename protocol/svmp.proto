@@ -24,7 +24,7 @@ message Request
   required RequestType type = 1;
 
   enum RequestType {
-    USERAUTH      = 0;
+    AUTH          = 0;
     VIDEO_PARAMS  = 1;
     TOUCHEVENT    = 2;
     SENSOREVENT   = 3;
@@ -35,9 +35,10 @@ message Request
     VIDEO_STOP    = 8;
     WEBRTC        = 9;
     ROTATION_INFO = 10;
+    PING          = 11; // client-initiated ping measurement (ms)
   }
 
-  optional Authentication authentication = 2;
+  optional AuthRequest authRequest = 2;
   optional VideoRequest videoRequest = 3;
 
   optional TouchEvent touch = 4;
@@ -47,6 +48,7 @@ message Request
 
   optional WebRTCMessage webrtcMsg = 9;
   optional RotationInfo rotationInfo = 10;
+  optional Ping pingRequest = 11;
 }
 
 // Server to client message wrapper
@@ -55,7 +57,7 @@ message Response
 
   enum ResponseType {
     ERROR         = 0; // 'message' should contain a useful error string
-    AUTHOK        = 1;
+    AUTH          = 1;
     VMREADY       = 2; // 'message' should contain any extra info needed to contact the VM
     SCREENINFO    = 3; // touch screen coordinate scaling info
     VIDSTREAMINFO = 4; // Info client needs to start video (IPs, ports, ICE servers, webrtc stuff, etc.)
@@ -66,15 +68,18 @@ message Response
     VIDEOSTOP     = 9;
     VIDEOPAUSE    = 10;
     WEBRTC        = 11; // WebRTC signalling message
+    PING          = 12; // response to client ping measurement (ms)
   }
 
   required ResponseType type = 1;
   optional string message = 2;
 
+  optional AuthResponse authResponse = 3;
   optional Intent intent = 4;
   optional Notification notification = 5;
   
   optional LocationResponse locationResponse = 6;
+  optional Ping pingResponse = 7;
 
   optional ScreenInfo screenInfo = 16;
   optional VideoStreamInfo videoInfo = 17;
@@ -288,17 +293,34 @@ message LocationResponse {
 // Other
 //=====================================================================
 
-message Authentication {
-  required string username             = 1;
-  repeated AuthenticationEntry entries = 2;
-  optional string sessionToken         = 3;
+// C->S
+message AuthRequest {
+  required AuthRequestType type = 1;
+
+  enum AuthRequestType {
+    SESSION_TOKEN  = 0;
+    AUTHENTICATION = 1; // any combination of auth input (password, security token, etc)
+  }
+
+  required string username      = 2;
+  optional string sessionToken  = 3;
+  optional string password      = 4;
+  optional string securityToken = 5;
 }
 
-message AuthenticationEntry {
-  required string key  = 1;
-  required bytes value = 2;
-}
+// S->C
+message AuthResponse {
+  required AuthResponseType type = 1;
 
+  enum AuthResponseType {
+    AUTH_OK              = 0; // sent in response to an AuthRequest
+    AUTH_FAIL            = 1; // sent in response to an AuthRequest
+    SESSION_MAX_TIMEOUT  = 2; // sent when the session times out
+    SESSION_IDLE_TIMEOUT = 3; // sent when the session times out
+  }
+
+  optional string sessionToken = 2;
+}
 
 // C->S
 message VideoRequest {
@@ -369,4 +391,8 @@ message VideoStreamInfo {
 // C->S
 message RotationInfo  {
   required int32 rotation = 1;
+}
+
+message Ping {
+  required int64 startDate = 1;
 }

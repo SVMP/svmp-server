@@ -9,13 +9,15 @@ var net = require('net'),
 
 function SimClient() {
     var client = net.connect(config.port, function () {
-        var authMsg = { type: 'USERAUTH', 
-                        authentication: {username: "dave", 
-                            entries: [{key:'password', value:'dave'}, 
-                                      {key: 'sessionToken', value: ''},
-                                      {key: 'testing', value: 'true'}
-                            ]
-                        } 
+        var authMsg = {
+            type: 'AUTH',
+            authRequest: {
+                type: "AUTHENTICATION",
+                username: "dave",
+                // left out session token on purpose
+                password: 'dave'
+                // left out security token on purpose
+            }
         };
         console.log("Connected...");
         proto.sendRequest( authMsg, client);
@@ -24,8 +26,11 @@ function SimClient() {
     client.on('data', function (data) {
         var resp = proto.readResponse(data);
 
-        if( resp.type === 'AUTHOK') {
-            console.log("Got AUTH OK.  SID: ", resp.message);
+        if (resp.type === 'AUTH') {
+            if (resp.authResponse.type === 'AUTH_OK')
+                console.log("Got AUTH OK.  SID: ", resp.authResponse.sessionToken);
+            else if (resp.authResponse.type === 'AUTH_FAIL')
+                console.log("Got AUTH FAIL.");
         }
 
         if (resp.type === 'VMREADY') {

@@ -25,24 +25,41 @@ var protocol = require('../lib/protocol');
 describe('Protocol Code', function(){
     it('should write/read authentication request', function (){
         var message = { 
-            type: "USERAUTH", 
-            authentication: {username: "dave", entries: [{key:'a', value:'b'}]},
+            type: "AUTH",
+            authRequest: {
+                type: "SESSION_TOKEN",
+                username: "dave",
+                sessionToken: "1a2b3c"
+                // leave out password on purpose
+                // leave out security token on purpose
+            }
         };
         var req = protocol.readRequest( protocol.writeRequest(message) );
-        assert.strictEqual(req.type, "USERAUTH");
-        assert.strictEqual(req.authentication.username, "dave");
-        assert.strictEqual(req.authentication.entries[0].key, "a");
+        assert.strictEqual(req.type, "AUTH");
+        assert.strictEqual(req.authRequest.type, "SESSION_TOKEN");
+        assert.strictEqual(req.authRequest.username, "dave");
+        assert.strictEqual(req.authRequest.sessionToken, "1a2b3c");
+        assert.strictEqual(req.authRequest.password, undefined); // left out password on purpose
+        assert.strictEqual(req.authRequest.securityToken, undefined); // left out security token on purpose
     });
 
     it('should parse an authentication message to an object', function () {
         var message = { 
-            type: "USERAUTH", 
-            authentication: {username: "dave", entries: [{'key':'a', 'value':'b'},{'key':'c', 'value':'d'}]},
+            type: "AUTH",
+            authRequest: {
+                type: "AUTHENTICATION",
+                username: "dave",
+                // leave out session token on purpose
+                password: "pass",
+                securityToken: "1234"
+            }
         };
         var obj = protocol.parseAuthentication( protocol.writeRequest(message) );
+        assert.strictEqual(obj.type, "AUTHENTICATION");
         assert.strictEqual(obj.username, "dave");
-        assert.strictEqual(obj.a, "b");
-        assert.strictEqual(obj.c, "d");   
+        assert.strictEqual(obj.sessionToken, undefined); // left out session token on purpose
+        assert.strictEqual(obj.password, "pass");
+        assert.strictEqual(obj.securityToken, "1234");
     });
 
     it('should error if not authentication message', function () {
@@ -58,13 +75,15 @@ describe('Protocol Code', function(){
 
     it('should write/read AUTHOK Response', function () {
         var message = {
-            type: 'AUTHOK',
-            message: '12345'
+            type: 'AUTH',
+            authResponse: {
+				type: 'AUTH_OK'
+			}
         };
 
         var resp = protocol.readResponse( protocol.writeResponse(message) );
-        assert.strictEqual(resp.type, "AUTHOK");
-        assert.strictEqual(resp.message, "12345");
+        assert.strictEqual(resp.type, "AUTH");
+        assert.strictEqual(resp.authResponse.type, "AUTH_OK");
 
     });
 
