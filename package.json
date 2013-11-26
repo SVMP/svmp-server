@@ -18,7 +18,8 @@
     "commander": "latest",
     "colors": "latest",
     "pkgcloud": "latest",
-    "authenticate-pam": "latest"
+    "authenticate-pam": "latest",
+    "winston": "latest"
   },
   "devDependencies": {
     "mocha": "latest"
