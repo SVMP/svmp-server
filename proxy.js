@@ -25,7 +25,8 @@ var net = require('net'),
     config = require('./config/config').settings,
     proxy = require('./lib/proxy'),
     auth = require('./lib/authentication'),
-    pam = require('./lib/pam-auth-plugin');
+    pam = require('./lib/pam-auth-plugin'),
+    winston = require('winston');
 
 if(config.tls_proxy) {
     var tls_options = {
@@ -33,6 +34,11 @@ if(config.tls_proxy) {
     	cert: fs.readFileSync('./tls/public-cert.pem')
     };
 }
+
+
+// Setup logger
+winston.add(winston.transports.File, {filename: 'proxy_log.txt'});
+
 
 // If you change this - change the call in cli.js as well
 // ... yea this should simplified ...
@@ -70,5 +76,6 @@ function onConnection(proxySocket) {
 
 var server = config.tls_proxy ? tls.createServer(tls_options, onConnection) : net.createServer(onConnection);
 server.listen(config.port);
-console.log("Proxy running on port", config.port, " Using TLS? : ", config.tls_proxy);
+winston.log('info', 'Proxy running on port %d Using TLS? %s', config.port, config.tls_proxy);
+//console.log("Proxy running on port", config.port, " Using TLS? : ", config.tls_proxy);
 
