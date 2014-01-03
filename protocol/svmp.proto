@@ -49,6 +49,7 @@ message Request
   optional WebRTCMessage webrtcMsg = 9;
   optional RotationInfo rotationInfo = 10;
   optional Ping pingRequest = 11;
+  optional VideoStreamInfo videoInfo = 12;
 }
 
 // Server to client message wrapper
@@ -393,6 +394,7 @@ message RotationInfo  {
   required int32 rotation = 1;
 }
 
+// C<->S
 message Ping {
   required int64 startDate = 1;
 }
