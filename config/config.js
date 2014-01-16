@@ -18,9 +18,8 @@
  */
 'use strict';
 var local = require('./config-local');
-var TTL = 5*60; // Currently 5 mins for testing
-local.settings.session_timeout = TTL;
 module.exports = local;
+
 /**
  * Expects a file named config-local.js in this directory with the following
  * format:
