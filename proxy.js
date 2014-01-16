@@ -30,8 +30,8 @@ var net = require('net'),
 
 if(config.tls_proxy) {
     var tls_options = {
-    	key: fs.readFileSync('./tls/private-key.pem'),
-    	cert: fs.readFileSync('./tls/public-cert.pem')
+        key:  fs.readFileSync(config.tls_private_key),
+        cert: fs.readFileSync(config.tls_certificate)
     };
 }
 
