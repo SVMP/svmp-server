@@ -60,17 +60,19 @@ function testAuth(reqObj,callback) {
 
 
 function onConnection(proxySocket) {
-    // Examples of using plugin authentication functions
+    var gateGuard;
 
     // Example using the test function above
     //var gateGuard = new auth.Authentication(testAuth);
 
-    // Example using the built in username/password in DB. Will set as default
-    var gateGuard = new auth.Authentication();
+    if(config.use_pam) {
+        // Using PAM
+        gateGuard = new auth.Authentication(pam.pamAuthentication);
+    } else {
+        // Example using the built in username/password in DB. Will set as default
+        gateGuard = new auth.Authentication();
+    }
 
-    // Using PAM
-    //var gateGuard = new auth.Authentication(pam.pamAuthentication);
-    
     proxy.proxyConnection(proxySocket,gateGuard);
 }
 
