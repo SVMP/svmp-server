@@ -37,7 +37,7 @@ if(config.tls_proxy) {
 
 
 // Setup logger
-winston.add(winston.transports.File, {filename: 'proxy_log.txt'});
+winston.add(winston.transports.File, {filename: config.log_file});
 
 
 // If you change this - change the call in cli.js as well
