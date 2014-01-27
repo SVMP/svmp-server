@@ -60,6 +60,11 @@ module.exports = {
         // default = 300 [5 minutes]
         session_token_ttl: 300,
 
+        // Interval (in seconds) of time to check for expired sessions.
+        // This is used while a connection is active.
+        // default = 60 [1 minute]
+        session_check_interval: 60,
+
         // Use PAM authentication
         // default = false
         use_pam: false,
