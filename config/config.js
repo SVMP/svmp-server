@@ -23,24 +23,77 @@ module.exports = local;
 /**
  * Expects a file named config-local.js in this directory with the following
  * format:
- *module.exports = {
+
+module.exports = {
     settings: {
+        // MongoDB database url
+        // default = 'mongodb://localhost/svmp_proxy_db'
         db: 'mongodb://localhost/svmp_proxy_db',
-        port: 8001,
+
+        // External TCP port to listen on for client connections.
+        // default = 8002
+        port: 8002,
+
+        // Port to connect to on Android VMs
+        // default = 8001
+        vm_port: 8001,
+
+        // Enable SSL
+        // default = false
         tls_proxy: false,
-        vm_port: 5000,
-        test_db: 'mongodb://localhost/proxy_testing_db',
-        openstack: {"authUrl": "http://", 
-                    "username": "test", 
+
+        // SSL certificate and private key paths
+        // (required if tls_proxy == true)
+        tls_certificate: '',
+        tls_private_key: '',
+
+        // Maximum length of a client session (in seconds) before it is
+        // forcibly disconnected. NOTE: if you change this after the
+        // database has been created, you should drop the "sessionmodels"
+        // collection from the database to force the index to update.
+        // default = 21600 [6 hours]
+        max_session_length: 21600,
+
+        // Validity time of session tokens in seconds.
+        // Allows client to reconnect a disconnected session by providing
+        // the token instead of doing a full re-authentication.
+        // default = 300 [5 minutes]
+        session_token_ttl: 300,
+
+        // Use PAM authentication
+        // default = false
+        use_pam: false,
+
+        // PAM 'service' name to use. I.e., which file under /etc/pam.d/
+        // default = 'svmp'
+        pam_service: 'svmp',
+
+        // Web Console
+        // Enable email functionality for the web console
+        // default = false
+        sendmail: false,
+        // SMTP server, username, and password
+        // TODO: what format?
+        smtp: '',
+        // Admin email address
+        admincontact: '',
+
+        // Log file path
+        log_file: 'proxy_log.txt',
+
+        // Openstack cloud connection details
+        openstack: {"authUrl": "http://",
+                    "username": "test",
                     "password": "test",
                     "tenantId": "eee",
                     "tenantName": "hello" },
-        pam: {service: '', remotehost: ''}
     },
     // Video Information sent from Proxy to Client
     webrtc: {
-        ice: { iceServer: [{url: 'stun1234'}]},
+        ice: { iceServers: [{url: 'stun:127.0.0.1:3478'}]}, // change IP and port to match your STUN server
         video: { audio: true, video: { mandatory: {}, optional: []}},
         pc: {optional: [{DtlsSrtpKeyAgreement: true}]}
     }
-};*/
+};
+
+*/

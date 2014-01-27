@@ -6,41 +6,23 @@ Serves as a basic TCP proxy between Android devices and Android VMs running in t
 h3. Install
 
     # Install "Node.js":http://nodejs.org
-    # Install "MongoDB":http://www.mongodb.org/downloads
+    # Install "MongoDB":http://docs.mongodb.org/manual/installation/ 2.2 or newer
     # Run 'npm install' from within this directory
 
 h3. Configuration
 
 	* Create a file named 'config-local.js' in the config directory.
-	* Add the following code to the config-local.js file:
+	* Follow the instructions in 'config.js' to add code to the config-local.js file, which should look like this:
 
 <pre>
 	<code>
 	module.exports = {
-    	settings: {
-        	db: 'mongodb://localhost/svmp_proxy_db',
-        	port: 8001,
-        	tls_proxy: false,
-        	vm_port: 5000,
-        	test_db: 'mongodb://localhost/proxy_testing_db',
-        	openstack: {"authUrl": "http://", 
-                   		"username": "test", 
-                   		"password": "test",
-                   		"tenantId": "eee",
-                   		"tenantName": "hello" },
-        	pam: {service: '', remotehost: ''}
-    	},
-    	// Video Information sent from Proxy to Client
-    	webrtc: {
-        	ice: { iceServer: [{url: 'stun1234'}]},
-        	video: { audio: true, video: { mandatory: {}, optional: []}},
-        	pc: {optional: [{DtlsSrtpKeyAgreement: true}]}
-    	}
+    	...
 	};
-	</code>	
+	</code>
 </pre>
 
-	Make sure to set the proper setting in the fields (openstack,pam, etc...)
+	Make sure to set the proper settings in the fields (openstack, pam, etc...)
 
 h3.  Running the Proxy Server
 	
