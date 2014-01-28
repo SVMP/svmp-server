@@ -1,0 +1,29 @@
+[ ca ]
+default_ca      = CA_default
+
+[ CA_default ]
+name_opt = CA_default
+cert_opt = CA_default
+default_crl_days = 999
+default_md = md5
+
+
+[ req ]
+default_bits           = 1024
+days                   = 999
+distinguished_name     = req_distinguished_name
+attributes             = req_attributes
+prompt                 = no
+output_password        = password
+
+[ req_distinguished_name ]
+C                      = US
+ST                     = MA
+L                      = B
+O                      = MITRE
+OU                     = SVMP
+CN                     = localhost
+emailAddress           = test@mitre.org
+
+[ req_attributes ]
+challengePassword              = A challenge password
