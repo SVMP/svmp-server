@@ -22,27 +22,48 @@ var net = require('net'),
     tls = require('tls'),
     mongoose = require('mongoose'),
     fs = require('fs'),
-    config = require('./config/config').settings,
-    proxy = require('./lib/proxy'),
-    auth = require('./lib/authentication'),
-    pam = require('./lib/pam-auth-plugin'),
+    config = require('./config/config'),
     winston = require('winston');
 
-if(config.tls_proxy) {
+// before doing anything else, read the config file and validate it
+// if this is successful, the "global.config" object will exist
+// if not, the process will exit with an error message
+config.tryValidate();
+
+// get settings from global config object
+var settings = global.config.settings;
+
+// Setup logger
+winston.add(winston.transports.File, {filename: settings.log_file});
+
+// now that the global config object has been created, include sub-modules
+var proxy = require('./lib/proxy'),
+    auth = require('./lib/authentication'),
+    pam = require('./lib/pam-auth-plugin');
+
+// If we are using TLS, try to open the key and certificate files
+if(settings.tls_proxy) {
+    try {
+        var tls_key = fs.readFileSync(settings.tls_private_key);
+    } catch (err) {
+        winston.error("Could not open TLS private key '%s' (check config.settings.tls_private_key)", settings.tls_private_key);
+        process.exit(1);
+    }
+    try {
+        var tls_cert = fs.readFileSync(settings.tls_certificate);
+    } catch (err) {
+        winston.error("Could not open TLS certificate '%s' (check config.settings.tls_certificate)", settings.tls_certificate);
+        process.exit(1);
+    }
     var tls_options = {
-        key:  fs.readFileSync(config.tls_private_key),
-        cert: fs.readFileSync(config.tls_certificate)
+        key:  tls_key,
+        cert: tls_cert
     };
 }
 
-
-// Setup logger
-winston.add(winston.transports.File, {filename: config.log_file});
-
-
 // If you change this - change the call in cli.js as well
 // ... yea this should simplified ...
-mongoose.connect(config.db);
+mongoose.connect(settings.db);
 
 /**
  * Example authentication callback function
@@ -58,14 +79,13 @@ function testAuth(reqObj,callback) {
     }
 }
 
-
 function onConnection(proxySocket) {
     var gateGuard;
 
     // Example using the test function above
     //var gateGuard = new auth.Authentication(testAuth);
 
-    if(config.use_pam) {
+    if(settings.use_pam) {
         // Using PAM
         gateGuard = new auth.Authentication(pam.pamAuthentication);
     } else {
@@ -76,8 +96,6 @@ function onConnection(proxySocket) {
     proxy.proxyConnection(proxySocket,gateGuard);
 }
 
-var server = config.tls_proxy ? tls.createServer(tls_options, onConnection) : net.createServer(onConnection);
-server.listen(config.port);
-winston.log('info', 'Proxy running on port %d Using TLS? %s', config.port, config.tls_proxy);
-//console.log("Proxy running on port", config.port, " Using TLS? : ", config.tls_proxy);
-
+var server = settings.tls_proxy ? tls.createServer(tls_options, onConnection) : net.createServer(onConnection);
+server.listen(settings.port);
+winston.log('info', 'Proxy running on port %d Using TLS? %s', settings.port, settings.tls_proxy);

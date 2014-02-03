@@ -19,6 +19,8 @@
     "colors": "latest",
     "pkgcloud": "latest",
     "authenticate-pam": "latest",
+    "JSV": "latest",
+    "jsvutil": "latest",
     "winston": "latest"
   },
   "devDependencies": {
