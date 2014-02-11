@@ -19,6 +19,7 @@
     "colors": "latest",
     "pkgcloud": "latest",
     "authenticate-pam": "latest",
+    "nan": "~0.8.0",
     "JSV": "latest",
     "jsvutil": "latest",
     "winston": "latest"
