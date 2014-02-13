@@ -42,7 +42,8 @@ winston.info("Starting proxy, log level: '%s'", settings.log_level);
 // now that the global config object has been created, include sub-modules
 var proxy = require('./lib/proxy'),
     auth = require('./lib/authentication'),
-    pam = require('./lib/pam-auth-plugin');
+    pam = require('./lib/pam-auth-plugin'),
+    tlsauth = require('./lib/tls-auth-plugin');
 
 // If we are using TLS, try to open the key and certificate files
 if(settings.tls_proxy) {
@@ -102,7 +103,19 @@ function onConnection(proxySocket) {
     // Example using the test function above
     //var gateGuard = new auth.Authentication(testAuth);
 
-    if(settings.use_pam) {
+    if(settings.use_tls_user_auth) {
+        // Using TLS user certificates
+        var cert = proxySocket.getPeerCertificate();
+
+        if (proxySocket.authorized) {
+            gateGuard = new auth.Authentication(tlsauth.tlsAuthentication(cert));
+        } else {
+            // invalid cert, disconnect and log
+            winston.error("Disconnecting. User certificate failed validation: " + cert);
+            proxySocket.destroy();
+            return;
+        }
+    } else if(settings.use_pam) {
         // Using PAM
         gateGuard = new auth.Authentication(pam.pamAuthentication);
     } else {
