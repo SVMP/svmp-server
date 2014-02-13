@@ -55,6 +55,14 @@ module.exports = {
                     "default" : "",
                     "type" : "string"
                 },
+                "use_tls_user_auth" : {
+                    "default": false,
+                    "type" : "boolean"
+                },
+                "tls_ca_cert" : {
+                    "default" : "",
+                    "type" : "string"
+                },
                 "max_session_length" : {
                     "default" : 21600,
                     "type" : "number"

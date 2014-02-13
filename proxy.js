@@ -58,10 +58,24 @@ if(settings.tls_proxy) {
         winston.error("Could not open TLS certificate '%s' (check config.settings.tls_certificate)", settings.tls_certificate);
         process.exit(1);
     }
+
     var tls_options = {
         key:  tls_key,
         cert: tls_cert
     };
+
+    if (settings.use_tls_user_auth) {
+        try {
+            tls_options.ca = [ fs.readFileSync(settings.tls_ca_cert) ];
+        } catch (err) {
+            winston.error("Could not open TLS ca cert file '%s' (check config.settings.tls_ca_cert)", settings. tls_ca_cert);
+            process.exit(1);
+        }
+
+        tls_options.requestCert = true;
+        tls_options.rejectUnauthorized = true;
+    }
+
 }
 
 // If you change this - change the call in cli.js as well

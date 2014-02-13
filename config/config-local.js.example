@@ -40,6 +40,14 @@ module.exports = {
         tls_certificate: '',
         tls_private_key: '',
 
+        // Use TLS client authentication
+        // default = false
+        use_tls_user_auth: false,
+
+        // TLS CA Cert to validate user certs against
+        // only used if use_tls_user_auth == true
+        tls_ca_cert: '',
+
         // Maximum length of a client session (in seconds) before it is
         // forcibly disconnected.
         // default = 21600 [6 hours]
