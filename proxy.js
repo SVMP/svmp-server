@@ -34,7 +34,10 @@ config.tryValidate();
 var settings = global.config.settings;
 
 // Setup logger
-winston.add(winston.transports.File, {filename: settings.log_file});
+winston.remove(winston.transports.Console);
+winston.add(winston.transports.Console, {level: settings.log_level, colorize: true});
+winston.add(winston.transports.File, {filename: settings.log_file, level: settings.log_level});
+winston.info("Starting proxy, log level: '%s'", settings.log_level);
 
 // now that the global config object has been created, include sub-modules
 var proxy = require('./lib/proxy'),

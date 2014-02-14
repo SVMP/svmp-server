@@ -78,6 +78,15 @@ module.exports = {
         // default = 'proxy_log.txt'
         log_file: 'proxy_log.txt',
 
+        // Log level to use, omits lower log levels
+        // Levels, lowest to highest: silly, debug, verbose, info, warn, error
+        // default = 'info'
+        log_level: 'info',
+
+        // Protobuf request messages to filter out when using verbose logging
+        // default = ['SENSOREVENT', 'TOUCHEVENT']
+        log_request_filter: ['SENSOREVENT', 'TOUCHEVENT'],
+
         // Openstack cloud connection details
         openstack: {"authUrl": "http://",
                     "username": "test",

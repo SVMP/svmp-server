@@ -90,6 +90,15 @@ module.exports = {
                     "default" : "proxy_log.txt",
                     "type" : "string"
                 },
+                "log_level" : {
+                    "default" : "info",
+                    "enum" : ["silly", "debug", "verbose", "info", "warn", "error"],
+                    "type" : "string",
+                },
+                "log_request_filter" : {
+                    "default" : ["SENSOREVENT", "TOUCHEVENT"],
+                    "type" : "array"
+                },
                 "openstack" : {
                     "required" : true,
                     "type" : "object",
