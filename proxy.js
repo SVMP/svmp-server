@@ -62,6 +62,7 @@ if(settings.tls_proxy) {
 
     var tls_options = {
         key:  tls_key,
+        passphrase: settings.tls_private_key_pass,
         cert: tls_cert
     };
 
@@ -74,7 +75,7 @@ if(settings.tls_proxy) {
         }
 
         tls_options.requestCert = true;
-        tls_options.rejectUnauthorized = true;
+        //tls_options.rejectUnauthorized = true;
     }
 
 }
@@ -103,17 +104,18 @@ function onConnection(proxySocket) {
     // Example using the test function above
     //var gateGuard = new auth.Authentication(testAuth);
 
-    if(settings.use_tls_user_auth) {
+    if(settings.tls_proxy && settings.use_tls_user_auth) {
         // Using TLS user certificates
         var cert = proxySocket.getPeerCertificate();
 
         if (proxySocket.authorized) {
+            winston.verbose("Client presented certificate: " + JSON.stringify(cert, null, 2));
             gateGuard = new auth.Authentication(tlsauth.tlsAuthentication(cert));
         } else {
-            // invalid cert, disconnect and log
-            winston.error("Disconnecting. User certificate failed validation: " + cert);
-            proxySocket.destroy();
-            return;
+            // invalid cert
+            winston.error("User certificate failed validation: " + JSON.stringify(cert, null, 2));
+            // call the tls authentication module with a null certificate, it will send the client an AUTH_FAIL
+            gateGuard = new auth.Authentication(tlsauth.tlsAuthentication(null));
         }
     } else if(settings.use_pam) {
         // Using PAM

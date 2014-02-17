@@ -55,6 +55,10 @@ module.exports = {
                     "default" : "",
                     "type" : "string"
                 },
+                "tls_private_key_pass" : {
+                    "default" : "",
+                    "type" : "string"
+                },
                 "use_tls_user_auth" : {
                     "default": false,
                     "type" : "boolean"

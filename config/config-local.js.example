@@ -40,6 +40,10 @@ module.exports = {
         tls_certificate: '',
         tls_private_key: '',
 
+        // SSL private key password
+        // (if the server private key file is password protected)
+        tls_private_key_pass: '',
+
         // Use TLS client authentication
         // default = false
         use_tls_user_auth: false,
