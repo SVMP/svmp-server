@@ -79,6 +79,14 @@ module.exports = {
                     "default" : 60,
                     "type" : "number"
                 },
+                "vm_idle_ttl" : {
+                    "default" : 3600,
+                    "type" : "number"
+                },
+                "vm_check_interval" : {
+                    "default" : 300,
+                    "type" : "number"
+                },
                 "use_pam" : {
                     "default" : false,
                     "type" : "boolean"

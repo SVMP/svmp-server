@@ -42,6 +42,9 @@ winston.info("Starting proxy, log level: '%s'", settings.log_level);
 // now that the global config object has been created, include sub-modules
 var proxy = require('./lib/proxy'),
     auth = require('./lib/authentication'),
+    session = require('./lib/session'),
+    users = require('./lib/users'),
+    openstack = require('./lib/openstack'),
     tlsauth = require('./lib/tls-auth-plugin');
 
 if (settings.use_pam) {
@@ -128,6 +131,47 @@ function testAuth(reqObj,callback) {
         callback('Login failure');
     }
 }
+
+/**
+ * Runs an interval to terminate expired VMs (those that have been idle for too long)
+ * This ensures that resources are freed up when users aren't using their VMs
+ */
+setInterval (
+    function interval() {
+        // Get an array of all sessions whose VMs are expired
+        session.getExpiredVmSessions().then(function (obj) {
+            winston.debug("getExpiredVmSessions returned %d result(s)", obj.length);
+            // loop through each session in the collection:
+            for (var i = 0; i < obj.length; i++) {
+                // record the session information
+                var sess = obj[i],
+                    arg = {username : sess.username};
+
+                // remove the session
+                sess.remove(function(err, result) {
+                    if (err)
+                        winston.error("Couldn't remove session: " + err);
+                    else
+                        winston.verbose("Removed session '%s'", result.sid)
+                });
+
+                // obtain and remove the user's VM information, then destroy the VM
+                users.removeUserVM(arg)
+                    .then(openstack.destroyVM)
+                    .then(function (obj) {
+                        winston.verbose("Destroyed expired VM '%s'", obj.vm_id);
+                    })
+                    .catch(function (e) {
+                        winston.error("Couldn't remove expired VM: " + e.message);
+                    });
+            }
+        })
+        .catch(function (e) {
+            winston.error("getExpiredVmSessions failed: " + e.message);
+        });
+    },
+    settings.vm_check_interval * 1000
+);
 
 function onConnection(proxySocket) {
     var gateGuard;
