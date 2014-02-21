@@ -17,7 +17,7 @@
     "mongoose": "latest",
     "commander": "latest",
     "colors": "latest",
-    "pkgcloud": "latest",
+    "pkgcloud": "git+https://github.com/davebryson/pkgcloud.git#svmp_openstack",
     "authenticate-pam": "latest",
     "nan": "~0.8.0",
     "JSV": "latest",

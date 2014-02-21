@@ -137,6 +137,32 @@ module.exports = {
                             "type" : "string"
                         }
                     }
+                },
+                "new_vm_defaults" : {
+                    "required" : true,
+                    "type" : "object",
+                    "properties" : {
+                        "goldimage": {
+                            "required": true,
+                            "type": "string"
+                        },
+                        "vmflavor": {
+                            "required": true,
+                            "type": "string"
+                        },
+                        "goldsnapshotId": {
+                            "required": true,
+                            "type": "string"
+                        },
+                        "goldsnapshotSize": {
+                            "required": true,
+                            "type": "number"
+                        },
+                        "pollintervalforstartup": {
+                            "required": true,
+                            "type": "number"
+                        }
+                    }
                 }
             }
         },
