@@ -8,3 +8,7 @@ config/config-local.js
 out/
 *.txt
 .srl
+
+# Eclipse project files
+.project
+.settings/
