@@ -67,7 +67,7 @@ describe("Authentication/Session logic spec", function() {
         a.authenticate(obj).then(function(r) {
             assert.ok(r.sid);
             assert.equal(r.username, 'dave');
-            assert.equal(r.vm, '');
+            assert.equal(r.vm_ip, '');
         }).then(done).fail(done);
     });
 
@@ -76,7 +76,7 @@ describe("Authentication/Session logic spec", function() {
         a.authenticate(obj).then(function(r) {
             assert.equal(r.sid, '1');
             assert.equal(r.username, 'dave');
-            assert.equal(r.vm, '');
+            assert.equal(r.vm_ip, '');
         }).then(done).fail(done);
 
     });
