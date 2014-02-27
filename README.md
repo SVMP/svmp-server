@@ -16,7 +16,8 @@ Serves as a basic TCP proxy between Android devices and Android VMs running in t
 
 ### Configuration
 
-1. Create a file named *config/config-local.js* using *config/config-local.js.example* as a template
+1. Create a file named *config/config-local.js* using *config/config-local.js.example* as a template.  Please
+read through the comments on config-local.js.example for a description of the fields
 2. Review the various fields in *config/config-local.js* and set them to match your configuration
 
 #### Enable TLS

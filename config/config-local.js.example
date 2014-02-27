@@ -117,11 +117,17 @@ module.exports = {
                     "tenantName": "hello" },
 
         // VM/Volume defaults
+
         // goldimage: the image id to use for new VMs
-        // vmflavor: the number value (as a string) of the VM flavor. Ex: m1.tiny = '1'
+
+        // vmflavor: the number value (as a string) of the VM flavor. Ex: m1.tiny = '1', m1.small = '2'  See Openstack
+        // for available values for your setup. Or run bin/spm image for a listing
+
         // goldsnapshotId: the snapshot id to use for new volumes
+
         // goldsnapshotSize: the integer size in GBs. THIS SHOULD BE SAME AS THE goldsnapshot SIZE
-        // pollintervalforstartup: this is the interval in milliseconds the apis to check for a running VM 
+
+        // pollintervalforstartup: this is the interval in milliseconds the apis to check for a running VM
         new_vm_defaults: {
             goldimage: "",
             vmflavor: "1",
