@@ -14,7 +14,6 @@
     "bytebuffer": "latest",
     "protobuf": "latest",
     "q": "latest",
-    "uid2": "latest",
     "mongoose": "latest",
     "commander": "latest",
     "colors": "latest",
