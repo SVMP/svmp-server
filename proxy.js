@@ -42,8 +42,16 @@ winston.info("Starting proxy, log level: '%s'", settings.log_level);
 // now that the global config object has been created, include sub-modules
 var proxy = require('./lib/proxy'),
     auth = require('./lib/authentication'),
-    pam = require('./lib/pam-auth-plugin'),
     tlsauth = require('./lib/tls-auth-plugin');
+
+if (settings.use_pam) {
+    try {
+        var pam = require('./lib/pam-auth-plugin');
+    } catch (err) {
+        winston.error("PAM authentication requested but could not load module. Exiting.");
+        process.exit(1);
+    }
+}
 
 // If we are using TLS, try to open the key and certificate files
 if(settings.tls_proxy) {
@@ -63,7 +71,30 @@ if(settings.tls_proxy) {
     var tls_options = {
         key:  tls_key,
         passphrase: settings.tls_private_key_pass,
-        cert: tls_cert
+        cert: tls_cert,
+        // Node 0.10.x does not accept TLSv1_1_method or TLSv1_2_method in this field.
+        // See src/node_crypto.cc, SecureContext::Init, around line 235
+        // 0.11.x does allow TLSv1_1_method and TLSv1_2_method
+        // However, 0.10.x still uses TLS 1.1 and 1.2, preferring 1.2 when available. We just can't mandate 1.2 only.
+        //secureProtocol: "TLSv1_2_method",
+        // Note: Node 0.10.x does not support DHE or ECDHE. The 0.11 development branch does, and it should be released as 0.12 "soon".
+        ciphers: // uses OpenSSL cipher suite names
+            "AES128-SHA:" +                    // TLS_RSA_WITH_AES_128_CBC_SHA
+            "AES256-SHA:" +                    // TLS_RSA_WITH_AES_256_CBC_SHA
+            "AES128-SHA256:" +                 // TLS_RSA_WITH_AES_128_CBC_SHA256
+            "AES256-SHA256:" +                 // TLS_RSA_WITH_AES_256_CBC_SHA256
+            "ECDHE-RSA-AES128-SHA:" +          // TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+            "ECDHE-RSA-AES256-SHA:" +          // TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+            "DHE-RSA-AES128-SHA:" +            // TLS_DHE_RSA_WITH_AES_128_CBC_SHA, should use at least 2048-bit DH
+            "DHE-RSA-AES256-SHA:" +            // TLS_DHE_RSA_WITH_AES_256_CBC_SHA, should use at least 2048-bit DH
+            "DHE-RSA-AES128-SHA256:" +         // TLS_DHE_RSA_WITH_AES_128_CBC_SHA256, should use at least 2048-bit DH
+            "DHE-RSA-AES256-SHA256:" +         // TLS_DHE_RSA_WITH_AES_256_CBC_SHA256, should use at least 2048-bit DH
+            "ECDHE-ECDSA-AES128-SHA256:" +     // TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, should use elliptic curve certificates
+            "ECDHE-ECDSA-AES256-SHA384:" +     // TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384, should use elliptic curve certificates
+            "ECDHE-ECDSA-AES128-GCM-SHA256:" + // TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256, should use elliptic curve certificates
+            "ECDHE-ECDSA-AES256-GCM-SHA384:" + // TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384, should use elliptic curve certificates
+            "@STRENGTH", // sort by strength
+        honorCipherOrder: true
     };
 
     if (settings.use_tls_user_auth) {
@@ -100,6 +131,9 @@ function testAuth(reqObj,callback) {
 
 function onConnection(proxySocket) {
     var gateGuard;
+
+    if(settings.tls_proxy)
+        winston.verbose("Client connected, using cipher: %s", JSON.stringify(proxySocket.getCipher()));
 
     // Example using the test function above
     //var gateGuard = new auth.Authentication(testAuth);

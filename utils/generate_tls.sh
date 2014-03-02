@@ -23,9 +23,9 @@ SERVER_PKEY_PASS="changeme_serverkeypass"
 CLIENT_PKEY_PASS="changeme_clientkeypass" # Only used when 'use_tls_user_auth' is enabled
 
 # If you set these higher than 1024, you will need the JCE unlimited strength files installed
-CA_PKEY_BITS=1024
-CLIENT_PKEY_BITS=1024
-SERVER_PKEY_BITS=1024
+CA_PKEY_BITS=2048
+CLIENT_PKEY_BITS=2048
+SERVER_PKEY_BITS=2048
 
 # No need to change these variables
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" # the directory this script is in
@@ -43,17 +43,6 @@ S_CSR="$OUT_PATH/server_cert.csr"
 S_CERT="$OUT_PATH/server_cert.pem"
 C_KANDC="$OUT_PATH/client_pkey_and_cert.p12"
 
-# Verify the user has keytool
-KEYTOOL=`which keytool`
-if [[ -z $JAVA || -z $KEYTOOL ]] ; then
-  echo "Can't find keytool on the path. Trying JAVA_HOME."
-  if [ -z $JAVA_HOME ] ; then
-    echo "JAVA_HOME not set. Aborting."
-    exit 1
-  else
-    KEYTOOL=$JAVA_HOME/bin/keytool
-  fi
-fi
 
 echo "Generating mutual SSL certificates..."
 echo ""
