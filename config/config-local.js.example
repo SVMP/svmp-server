@@ -110,15 +110,15 @@ module.exports = {
         log_request_filter: ['SENSOREVENT', 'TOUCHEVENT'],
 
         // Openstack cloud connection details
-        openstack: {"authUrl": "http://",
-                    "username": "test",
-                    "password": "test",
-                    "tenantId": "eee",
-                    "tenantName": "hello" },
+        openstack: {
+            "authUrl": "http://localhost:5000/",
+            "username": "test",
+            "password": "test",
+            "tenantId": "0123456789abcdef0123456789abcdef",
+            "tenantName": "test"
+        },
 
         // VM/Volume defaults
-
-        // goldimage: the image id to use for new VMs
 
         // vmflavor: the number value (as a string) of the VM flavor. Ex: m1.tiny = '1', m1.small = '2'  See Openstack
         // for available values for your setup. Or run bin/spm image for a listing
@@ -129,7 +129,10 @@ module.exports = {
 
         // pollintervalforstartup: this is the interval in milliseconds the apis to check for a running VM
         new_vm_defaults: {
-            goldimage: "",
+            "images": {
+                // each device type should have its own name and image ID in key/value format, e.g.:
+                // "device_type": "imageID",
+            },
             vmflavor: "1",
             goldsnapshotId: "",
             goldsnapshotSize: 6,
