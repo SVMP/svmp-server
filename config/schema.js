@@ -150,9 +150,9 @@ module.exports = {
                     "required" : true,
                     "type" : "object",
                     "properties" : {
-                        "goldimage": {
-                            "required": true,
-                            "type": "string"
+                        "images" : {
+                            "required" : true,
+                            "type" : "object"
                         },
                         "vmflavor": {
                             "required": true,
