@@ -1,8 +1,20 @@
 {
-  "name": "node_svmp_proxy",
+  "name": "svmp-server",
+  "description": "SVMP Gateway Server",
   "version": "1.2.0",
+  "license": "Apache-2.0",
+  "url": "https://github.com/SVMP/svmp-server",
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/SVMP/svmp-server.git"
+  },
   "private": true,
   "author": "Dave Bryson",
+  "contributors": [
+    "Dave Bryson",
+    "David Keppler",
+    "Joe Portner"
+  ],
   "engines": {
     "node": "0.10.2",
     "npm": "1.2"
@@ -17,13 +29,15 @@
     "mongoose": "latest",
     "commander": "latest",
     "colors": "latest",
-    "pkgcloud": "git+https://github.com/davebryson/pkgcloud.git#svmp_openstack",
-    "authenticate-pam": "latest",
-    "nan": "~0.8.0",
+    "pkgcloud": "git+https://github.com/SVMP/pkgcloud.git#svmp_openstack",
     "JSV": "latest",
     "jsvutil": "latest",
     "to-date": "latest",
     "winston": "latest"
+  },
+  "optionalDependencies": {
+    "authenticate-pam": "latest",
+    "nan": "~0.8.0"
   },
   "devDependencies": {
     "mocha": "latest"
