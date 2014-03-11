@@ -51,7 +51,7 @@ If you want to use client certificate authentication, follow the **Enable TLS** 
 1. Start MongoDB
 2. Start the proxy:
 
-        $ node proxy.js
+        $ node server.js
 
 ### Adding Users and VMs
 

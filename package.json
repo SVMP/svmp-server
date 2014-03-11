@@ -20,7 +20,7 @@
     "npm": "1.2"
   },
   "scripts": {
-    "start": "node proxy.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "bytebuffer": "latest",
