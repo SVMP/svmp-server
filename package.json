@@ -29,7 +29,7 @@
     "mongoose": "latest",
     "commander": "latest",
     "colors": "latest",
-    "pkgcloud": "git+https://github.com/SVMP/pkgcloud.git#svmp_openstack_update",
+    "pkgcloud": "git+https://github.com/SVMP/pkgcloud.git#0.9.4-svmp",
     "JSV": "latest",
     "jsvutil": "latest",
     "to-date": "latest",
