@@ -115,7 +115,8 @@ module.exports = {
             "username": "test",
             "password": "test",
             "tenantId": "0123456789abcdef0123456789abcdef",
-            "tenantName": "test"
+            "tenantName": "test",
+            "region": "RegionOne"
         },
 
         // VM/Volume defaults
