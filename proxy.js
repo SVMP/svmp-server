@@ -158,23 +158,7 @@ setInterval (
                 // obtain and remove the user's VM information, then destroy the VM
                 users.findUser(arg)
                     .then(users.removeUserVM)
-                    .then(function (obj) {
-                        // destroy the VM itself
-                        openstack.destroyVM(obj)
-                            .fin(function() {
-                                // destroying the VM has resolved
-                                // if we are using floating IPs, try to de-allocate this VMs IP
-                                if (obj.vm_ip_id) {
-                                    openstack.deallocateFloatingIp(obj)
-                                        .then(function(obj) {
-                                            winston.verbose("Deallocated floating IP '%s'", obj.vm_ip);
-                                        }, printErr );
-                                }
-                            })
-                            .then(function(obj) {
-                                winston.verbose("Destroyed expired VM '%s'", obj.vm_id);
-                            }, printErr );
-                    })
+                    .then(openstack.destroyVM)
                     .catch(printErr);
             }
         }, printErr );
