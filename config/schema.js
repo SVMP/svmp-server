@@ -173,6 +173,13 @@ module.exports = {
                         "pollintervalforstartup": {
                             "required": true,
                             "type": "number"
+                        },
+                        "use_floating_ips": {
+                            "required": true,
+                            "type": "boolean"
+                        },
+                        "floating_ip_pool": {
+                            "type": "string"
                         }
                     }
                 }
