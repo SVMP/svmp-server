@@ -156,22 +156,26 @@ setInterval (
                 });
 
                 // obtain and remove the user's VM information, then destroy the VM
-                users.removeUserVM(arg)
-                    .then(openstack.destroyVM)
+                users.findUser(arg)
+                    .then(users.removeUserVM)
                     .then(function (obj) {
-                        winston.verbose("Destroyed expired VM '%s'", obj.vm_id);
+                        // destroy the VM itself
+                        openstack.destroyVM(obj)
+                            .then(function(obj) {
+                                winston.verbose("Destroyed expired VM '%s'", obj.vm_id);
+                            }, printErr );
                     })
-                    .catch(function (e) {
-                        winston.error("Couldn't remove expired VM: " + e.message);
-                    });
+                    .catch(printErr);
             }
-        })
-        .catch(function (e) {
-            winston.error("getExpiredVmSessions failed: " + e.message);
-        });
+        }, printErr );
     },
     settings.vm_check_interval * 1000
 );
+
+// helper function to pass to Q that prints messages from Error objects
+function printErr(e) {
+    winston.error(e.message);
+}
 
 function onConnection(proxySocket) {
     var gateGuard;
