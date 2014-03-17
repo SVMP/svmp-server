@@ -120,15 +120,17 @@ module.exports = {
         },
 
         // VM/Volume defaults
-
+        // images: a map of device types to their respective image ids on the Openstack server.
         // vmflavor: the number value (as a string) of the VM flavor. Ex: m1.tiny = '1', m1.small = '2'  See Openstack
-        // for available values for your setup. Or run bin/spm image for a listing
-
+        //   for available values for your setup. Or run bin/spm image for a listing. Note: GUID values won't work.
         // goldsnapshotId: the snapshot id to use for new volumes
-
         // goldsnapshotSize: the integer size in GBs. THIS SHOULD BE SAME AS THE goldsnapshot SIZE
-
+        // use_floating_ip: if this is enabled, we assign a floating IP address to the VM when we start it. This is
+        //   necessary if the proxy server isn't running within Openstack itself.
+        // floating_ip_pool: if use_floating_ip is enabled, this can be optionally specified to tell Openstack what
+        //   ip pool to use when allocating new addresses
         // pollintervalforstartup: this is the interval in milliseconds the apis to check for a running VM
+
         new_vm_defaults: {
             "images": {
                 // each device type should have its own name and image ID in key/value format, e.g.:
@@ -137,6 +139,8 @@ module.exports = {
             vmflavor: "1",
             goldsnapshotId: "",
             goldsnapshotSize: 6,
+            use_floating_ips: false,
+            floating_ip_pool: "nova",
             pollintervalforstartup: 2000
         }
     },
