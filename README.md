@@ -8,6 +8,17 @@ Serves as a basic TCP proxy between Android devices and Android VMs running in t
 * Install [Node.js](http://nodejs.org)
 * Install [MongoDB](http://docs.mongodb.org/manual/installation/) 2.2 or newer
 
+#### Windows only
+* Install [Git for Windows](http://msysgit.github.io/)
+* Install [Python 2.7.6](https://www.python.org/download/releases/2.7.6/)
+
+Additionally, on Windows, do the following *in order:*
+
+* Install [Visual Studio 2010](http://www.microsoft.com/visualstudio/eng/downloads#d-2010-express)
+* Install [Windows SDK 7.1](http://www.microsoft.com/en-us/download/details.aspx?id=8279)
+* Install [Visual Studio 2010 SP1](http://www.microsoft.com/en-us/download/details.aspx?id=23691)
+* Install [Visual C++ 2010 SP1 Compiler Update for the Windows SDK 7.1](http://www.microsoft.com/en-us/download/details.aspx?id=4422)
+
 ### Install Steps
 1. Download this project
 2. Within the root directory of this project, run this command to install the project and download dependencies:
@@ -45,6 +56,26 @@ If you want to use client certificate authentication, follow the **Enable TLS** 
 1. In *config/config-local.js*, set the `tls_ca_cert` value to match your CA certificate, and set the `use_tls_user_auth` value to *true*
 2. Copy the client certificate *.p12* file to your device (Note: Android 4.0+ required)
 3. To install the client certificate, open the SVMP client, create a new connection, choose an *Auth Type* of *Certificate*, touch the *Certificate* button, and use the KeyChain system to install the certificate
+
+#### Using OpenStack
+To connect your server to OpenStack:
+
+1. In your config file, set the appropriate connection details within the `openstack` option.
+2. Currently, to support different screen sizes and resolutions, each device type that is used with the server should be paired with its own image. In your config file, add device types and their matching image IDs in key/value format in `new_vm_defaults` : `images`.
+3. Other VM-related settings in `new_vm_defaults` should also be adjusted to match your setup.
+
+#### Managing sessions
+After a client authenticates, they receive a session token. There are three config options for managing sessions:
+
+* `max_session_length` - How long before a session expires. Clients with expired sessions get disconnected and require re-authentication.
+* `session_token_ttl` - The grace period in which a client can use a session token to reconnect to the server without re-authenticating.
+* `session_check_interval` - How often the server checks active sessions to see if they are expired.
+
+#### Managing VM lifespans
+If a client connects and they don't already have a VM running, the server will create one on the fly. When a user disconnects, their VM becomes idle; after being idle for too long, a VM becomes expired and gets destroyed. There are two config options for managing VM lifespans:
+
+* `vm_idle_ttl` - How long before an idle VM is considered expired.
+* `vm_check_interval` - How often the server checks idle VMs to see if they are expired.
 
 ### Running the Proxy Server
 
