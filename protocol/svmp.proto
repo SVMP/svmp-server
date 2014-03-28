@@ -320,7 +320,13 @@ message AuthResponse {
     SESSION_IDLE_TIMEOUT = 3; // sent when the session times out
   }
 
-  optional string sessionToken = 2;
+  optional SessionInfo sessionInfo = 2; // sent with an AUTH_OK message
+}
+
+message SessionInfo {
+  required string token = 1;      // randomly generated token identifier
+  required int32 maxLength = 2;   // max life in seconds of the session before it expires (server: max_session_length)
+  required int32 gracePeriod = 3; // time period in seconds that the session can reconnect (server: session_token_ttl)
 }
 
 // C->S
