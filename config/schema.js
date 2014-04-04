@@ -18,145 +18,154 @@
  */
 
 module.exports = {
-    "$schema" : "http://json-schema.org/draft-03/schema",
-    "required" : true,
-    "type" : "object",
-    "properties" : {
-        "settings" : {
-            "required" : true,
-            "type" : "object",
-            "properties" : {
-                "db" : {
-                    "default" : "mongodb://localhost/svmp_proxy_db",
-                    // TODO: add pattern validation for db
-                    "type" : "string"
-                },
-                "port" : {
-                    "default" : 8002,
-                    "minimum" : 1,
-                    "maximum" : 65535,
-                    "type" : "number"
-                },
-                "vm_port" : {
-                    "default" : 8001,
-                    "minimum" : 1,
-                    "maximum" : 65535,
-                    "type" : "number"
-                },
-                "tls_proxy" : {
-                    "default" : false,
-                    "type" : "boolean"
-                },
-                "tls_certificate" : {
-                    "default" : "",
-                    "type" : "string"
-                },
-                "tls_private_key" : {
-                    "default" : "",
-                    "type" : "string"
-                },
-                "tls_private_key_pass" : {
-                    "default" : "",
-                    "type" : "string"
-                },
-                "use_tls_user_auth" : {
-                    "default": false,
-                    "type" : "boolean"
-                },
-                "tls_ca_cert" : {
-                    "default" : "",
-                    "type" : "string"
-                },
-                "max_session_length" : {
-                    "default" : 21600,
-                    "type" : "number"
-                },
-                "session_token_ttl" : {
-                    "default" : 300,
-                    "type" : "number"
-                },
-                "session_check_interval" : {
-                    "default" : 60,
-                    "type" : "number"
-                },
-                "vm_idle_ttl" : {
-                    "default" : 3600,
-                    "type" : "number"
-                },
-                "vm_check_interval" : {
-                    "default" : 300,
-                    "type" : "number"
-                },
-                "use_pam" : {
-                    "default" : false,
-                    "type" : "boolean"
-                },
-                "pam_service" : {
-                    "default" : "svmp",
-                    "type" : "string"
-                },
-                "sendmail" : {
-                    "default" : false,
-                    "type" : "boolean"
-                },
-                "smtp" : {
-                    "type" : "string"
-                },
-                "admincontact" : {
-                    // TODO: add pattern validation for admincontact email address
-                    "type" : "string"
-                },
-                "log_file" : {
-                    "default" : "proxy_log.txt",
-                    "type" : "string"
-                },
-                "log_level" : {
-                    "default" : "info",
-                    "enum" : ["silly", "debug", "verbose", "info", "warn", "error"],
-                    "type" : "string",
-                },
-                "log_request_filter" : {
-                    "default" : ["SENSOREVENT", "TOUCHEVENT"],
-                    "type" : "array"
-                },
-                "openstack" : {
-                    "required" : true,
-                    "type" : "object",
-                    "properties" : {
-                        "authUrl" : {
-                            "required" : true,
-                            // TODO: add pattern validation for authUrl
-                            "type" : "string"
+    "$schema": "http://json-schema.org/draft-03/schema",
+    "required": true,
+    "type": "object",
+    "properties": {
+        "settings": {
+            "required": true,
+            "type": "object",
+            "properties": {
+                "db": {
+                    "required": true,
+                    "type": "object",
+                    "properties": {
+                        "production": {
+                            "default": "mongodb://localhost/svmp_proxy_db",
+                            "type": "string"
                         },
-                        "password" : {
-                            "required" : true,
-                            "type" : "string"
-                        },
-                        "tenantId" : {
-                            "required" : true,
-                            "type" : "string"
-                        },
-                        "tenantName" : {
-                            "required" : true,
-                            "type" : "string"
-                        },
-                        "username" : {
-                            "required" : true,
-                            "type" : "string"
-                        },
-                        "region" : {
-                            "required" : true,
-                            "type" : "string"
+                        "test": {
+                            "default": "mongodb://localhost/svmp_proxy_db_test",
+                            "type": "string"
                         }
                     }
                 },
-                "new_vm_defaults" : {
-                    "required" : true,
-                    "type" : "object",
-                    "properties" : {
-                        "images" : {
-                            "required" : true,
-                            "type" : "object"
+                "port": {
+                    "default": 8002,
+                    "minimum": 1,
+                    "maximum": 65535,
+                    "type": "number"
+                },
+                "vm_port": {
+                    "default": 8001,
+                    "minimum": 1,
+                    "maximum": 65535,
+                    "type": "number"
+                },
+                "tls_proxy": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "tls_certificate": {
+                    "default": "",
+                    "type": "string"
+                },
+                "tls_private_key": {
+                    "default": "",
+                    "type": "string"
+                },
+                "tls_private_key_pass": {
+                    "default": "",
+                    "type": "string"
+                },
+                "use_tls_user_auth": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "tls_ca_cert": {
+                    "default": "",
+                    "type": "string"
+                },
+                "max_session_length": {
+                    "default": 21600,
+                    "type": "number"
+                },
+                "session_token_ttl": {
+                    "default": 300,
+                    "type": "number"
+                },
+                "session_check_interval": {
+                    "default": 60,
+                    "type": "number"
+                },
+                "vm_idle_ttl": {
+                    "default": 3600,
+                    "type": "number"
+                },
+                "vm_check_interval": {
+                    "default": 300,
+                    "type": "number"
+                },
+                "use_pam": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "pam_service": {
+                    "default": "svmp",
+                    "type": "string"
+                },
+                "sendmail": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "smtp": {
+                    "type": "string"
+                },
+                "admincontact": {
+                    // TODO: add pattern validation for admincontact email address
+                    "type": "string"
+                },
+                "log_file": {
+                    "default": "proxy_log.txt",
+                    "type": "string"
+                },
+                "log_level": {
+                    "default": "info",
+                    "enum": ["silly", "debug", "verbose", "info", "warn", "error"],
+                    "type": "string"
+                },
+                "log_request_filter": {
+                    "default": ["SENSOREVENT", "TOUCHEVENT"],
+                    "type": "array"
+                },
+                "openstack": {
+                    "required": true,
+                    "type": "object",
+                    "properties": {
+                        "authUrl": {
+                            "required": true,
+                            // TODO: add pattern validation for authUrl
+                            "type": "string"
+                        },
+                        "password": {
+                            "required": true,
+                            "type": "string"
+                        },
+                        "tenantId": {
+                            "required": true,
+                            "type": "string"
+                        },
+                        "tenantName": {
+                            "required": true,
+                            "type": "string"
+                        },
+                        "username": {
+                            "required": true,
+                            "type": "string"
+                        },
+                        "region": {
+                            "required": true,
+                            "type": "string"
+                        }
+                    }
+                },
+                "new_vm_defaults": {
+                    "required": true,
+                    "type": "object",
+                    "properties": {
+                        "images": {
+                            "required": true,
+                            "type": "object"
                         },
                         "vmflavor": {
                             "required": true,
@@ -185,83 +194,84 @@ module.exports = {
                 }
             }
         },
-        "webrtc" : {
-            "required" : true,
-            "type" : "object",
-            "properties" : {
-                "ice" : {
-                    "required" : true,
-                    "type" : "object",
-                    "properties" : {
-                        "iceServers" : {
-                            "required" : true,
-                            "minItems" : 1,
-                            "type" : "array",
-                            "items" : {
-                                "required" : true,
-                                "type" : "object",
-                                "properties" : {
-                                    "url" : {
-                                        "required" : true,
+        "webrtc": {
+            "required": true,
+            "type": "object",
+            "properties": {
+                "ice": {
+                    "required": true,
+                    "type": "object",
+                    "properties": {
+                        "iceServers": {
+                            "required": true,
+                            "minItems": 1,
+                            "type": "array",
+                            "items": {
+                                "required": true,
+                                "type": "object",
+                                "properties": {
+                                    "url": {
+                                        "required": true,
                                         // TODO: add pattern validation for stun:host:port URL
-                                        "type" : "string"
+                                        "type": "string"
                                     }
                                 }
                             }
                         }
                     }
                 },
-                "pc" : {
-                    "default" : {
-                        optional : [{
-                                DtlsSrtpKeyAgreement : true
+                "pc": {
+                    "default": {
+                        optional: [
+                            {
+                                DtlsSrtpKeyAgreement: true
                             }
                         ]
                     },
-                    "type" : "object",
-                    "properties" : {
-                        "optional" : {
-                            "required" : true,
-                            "minItems" : 1,
-                            "type" : "array",
-                            "items" : {
-                                "required" : true,
-                                "type" : "object",
-                                "properties" : {
-                                    "DtlsSrtpKeyAgreement" : {
-                                        "required" : true,
-                                        "type" : "boolean"
+                    "type": "object",
+                    "properties": {
+                        "optional": {
+                            "required": true,
+                            "minItems": 1,
+                            "type": "array",
+                            "items": {
+                                "required": true,
+                                "type": "object",
+                                "properties": {
+                                    "DtlsSrtpKeyAgreement": {
+                                        "required": true,
+                                        "type": "boolean"
                                     }
                                 }
                             }
                         }
                     }
                 },
-                "video" : {
-                    "default" : {
-                        audio : true,
-                        video : {
-                            mandatory : {},
-                            optional : []
+                "video": {
+                    "default": {
+                        audio: true,
+                        video: {
+                            mandatory: {},
+                            optional: []
                         }
                     },
-                    "type" : "object",
-                    "properties" : {
-                        "audio" : {
-                            "required" : true,
-                            "type" : "boolean"
+                    "type": "object",
+                    "properties": {
+                        "audio": {
+                            "required": true,
+                            "type": "boolean"
                         },
-                        "video" : {
-                            "required" : true,
-                            "type" : "object",
-                            "properties" : {
-                                "mandatory" : {
-                                    "required" : true,
-                                    "type" : "object"
+                        "video": {
+                            "required": true,
+                            "type": "object",
+                            "properties": {
+                                "mandatory": {
+                                    "required": true,
+                                    "type": "object"
                                 },
-                                "optional" : {
-                                    "required" : true,
-                                    "type" : "array"
+                                "optional": {
+                                    "required": true,
+                                    "type": "array"
                                 }
                             }
                         }

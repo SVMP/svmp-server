@@ -2,14 +2,14 @@
 .DS_Store
 .idea
 node_modules
-TODO.txt
 config/config-local.js
+config/config-local.json
 *.iml
 out/
 *.txt
-.srl
 *.log
 
 # Eclipse project files
 .project
 .settings/
+old/
