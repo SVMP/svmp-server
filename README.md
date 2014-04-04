@@ -27,9 +27,9 @@ Additionally, on Windows, do the following *in order:*
 
 ### Configuration
 
-1. Create a file named *config/config-local.js* using *config/config-local.js.example* as a template.  Please
-read through the comments on config-local.js.example for a description of the fields
-2. Review the various fields in *config/config-local.js* and set them to match your configuration
+1. Create a file named *config/config-local.json* using *config/config-local-example.json.example* as a template. (we need to
+document the setting separately - no comments allowed in json)
+2. Review the various fields in *config/config-local.json* and set them to match your configuration
 
 #### Enable TLS
 
