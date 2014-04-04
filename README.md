@@ -82,13 +82,13 @@ If a client connects and they don't already have a VM running, the server will c
 1. Start MongoDB
 2. Start the proxy:
 
-        $ node server.js
+        $ node bin/server.js
 
 ### Adding Users and VMs
 
 * Run the commandline client from the root directory of the project:
 
-        $ ./bin/spm -h
+        $ ./bin/cli.js -h
 
     Run the help command to see a list of all commands
 
