@@ -25,12 +25,12 @@ var
     svmp = require('../lib/svmp'),
     proxy = require('../lib/server/proxy'),
     svmpSocket = require('../lib/server/svmpsocket'),
-    auth = require('./authentication');
+    auth = require('../lib/authentication');
 
 svmp.init();
 
-var port = svmp.config.get('setting:port');
-var with_tls = svmp.config.get('setting:tls_proxy');
+var port = svmp.config.get('settings:port');
+var with_tls = svmp.config.get('settings:tls_proxy');
 
 
 /**
