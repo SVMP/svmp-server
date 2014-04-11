@@ -109,6 +109,27 @@ program
     });
 
 program
+    .command('clear-session-info <username>')
+    .description('Clear the session information for a user')
+    .action(function (un) {
+        console.log('');
+        svmp.users.findUser({username: un})
+        .then(svmp.session.clearSessionsForUser)
+        .then(function (u) {
+                console.log('   WARNING: if using openstack, this may result in idle VMs that will not be destroyed!');
+                console.log('   Cleared any sessions for:');
+                console.log('   User'.bold.help);
+                console.log('   ', JSON.stringify(u).data);
+                svmp.shutdown();
+            },
+            function (err) {
+                console.log("Error, " + e.message);
+                svmp.shutdown();
+            }
+        );
+    });
+
+program
     .command('show <username>')
     .description('Show information about a user')
     .action(function (un) {
