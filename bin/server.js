@@ -18,9 +18,6 @@
  * @author Dave Bryson
  *
  */
-
-// TODO: This needs testing
-
 var
     svmp = require('../lib/svmp'),
     proxy = require('../lib/server/proxy'),
