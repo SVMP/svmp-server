@@ -53,8 +53,10 @@ region                  string     required    Region name for your OpenStack se
 new_vm_defaults         object     required    VM and volume defaults for OpenStack
 ------------------------------------------------------------------------------------------------------------------------
 images                  object     required    Contains string key/value pairs for device types and their respective
-                                               OpenStack image IDs; you should create a new image for each type of
-                                               device that you support
+                                               OpenStack image IDs; for each type of device that you support, you should
+                                               make a new image, upload that image to OpenStack, and record the imageID
+                                               Ex:    images: { "nexus_s": "7d532f18-88ed-489b-8b7a-9dfb72f0c8f4",
+                                                                "nexus_7": "f69f5e06-2c6c-4bc4-848d-05464f18c413" }
 vmflavor                string     required    The OpenStack VM flavor to use; note, MUST be a number, cannot be a GUID
 use_floating_ips        boolean    required    Enables or disables the use of floating IP addresses for VMs
 floating_ip_pool        string     optional    Name of the IP pool to use for floating IPs
