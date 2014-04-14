@@ -99,36 +99,47 @@ describe("Authentication/Session logic spec", function () {
 
     // Can't test this because of how lastAction works in session create..
 
-    /*it('should re-authenticate an existing session without login', function (done) {
+    it('should re-authenticate an existing session without login', function (done) {
         svmp.config.set('settings:use_pam', false);
         svmp.config.set('settings:use_tls_user_auth', false);
+        svmp.config.set('settings:max_session_length', 300); // make sure the max session length is long enough to test
+        svmp.config.set('settings:session_token_ttl', 300); // make sure the session grace period is long enough to test
 
         var a = auth.Authentication.loadStrategy();
 
         svmp.session.create({user: {username: 'dave'}}).then(function (r) {
+            // the session has been created, the user now is "connected"
+            // lastAction is currently Date(0)
+            // now, simulate the user disconnecting
+            var sess = r.session;
+            sess.lastAction = new Date(); // set the lastAction to now
+            sess.save(function (err, sess, numberAffected) {
+                if (err) {
+                    assert.strictEqual(err, 'Unable to save session');
+                } else {
+                    // the user is now "disconnected"; re-authenticate with the session token
+                    var sid = sess.sid;
 
-            var sid = r.session.sid;
+                    var protoMsg = {
+                        type: 'AUTH',
+                        authRequest: {
+                            type: 'AUTHENTICATION',
+                            username: '',
+                            password: '',
+                            sessionToken: sid
+                        }
+                    };
 
-            var protoMsg = {
-                type: 'AUTH',
-                authRequest: {
-                    type: 'AUTHENTICATION',
-                    username: '',
-                    password: '',
-                    sessionToken: sid
+                    var requestObj = svmp.protocol.parseRequest(svmp.protocol.writeRequest(protoMsg));
+                    a.authenticate(requestObj)
+                        .then(function (r) {
+                            assert.ok(r.session.sid);
+                            assert.equal(r.user.username, 'dave');
+                        }).then(done, done);
                 }
-            };
-
-            var requestObj = svmp.protocol.parseRequest(svmp.protocol.writeRequest(protoMsg));
-            a.authenticate(requestObj)
-                .then(function (r) {
-                    assert.ok(r.session.sid);
-                    assert.equal(r.user.username, 'dave');
-                }).then(done, done);
-
-
+            });
         });
-    });*/
+    });
 
     it('should load db authentication strategy', function (done) {
         svmp.config.set('settings:use_pam', false);
