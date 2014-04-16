@@ -26,7 +26,8 @@
 var
     program = require('commander'),
     colors = require('colors'),
-    svmp = require('../lib/svmp');
+    svmp = require('../lib/svmp'),
+    Table = require('cli-table');
 
 colors.setTheme({
     silly: 'rainbow',
@@ -48,20 +49,32 @@ program
     .command('list')
     .description('List proxy Users')
     .action(function () {
-        console.log('   Proxy users:'.bold.help);
         console.log('');
+        console.log('Proxy users:'.bold.help);
         svmp.users.listUsers(function (err, list) {
             if (list) {
-                for (i = 0; i < list.length; i++) {
+                var table = new Table({
+                    head: ['User', 'VM_IP', 'VM_ID', 'VOL_ID', 'Device']
+                });
+
+                for (var i = 0; i < list.length; i++) {
                     var o = list[i];
-                    var mo = {};
-                    mo.username = o.username;
-                    mo.vm_ip = o.vm_ip;
-                    mo.vm_id = o.vm_id;
-                    mo.volume_id = o.volume_id;
-                    mo.device_type = o.device_type;
-                    console.log('       * '.warn, JSON.stringify(mo).warn);
+                    var vm_ip = o.vm_ip || "";
+                    var vm_id = o.vm_id || "";
+                    var volume_id = o.volume_id || "";
+                    var device = o.device_type || "";
+
+                    table.push([
+                        o.username,
+                        vm_ip,
+                        vm_id,
+                        volume_id,
+                        device
+
+                    ]);
+
                 }
+                console.log(table.toString());
             } else {
                 console.log('Error: ', err);
             }
@@ -73,11 +86,15 @@ program
     .command('devices')
     .description('List supported device types')
     .action(function () {
-        console.log('   Supported device types (settings.new_vm_defaults.images):'.bold.help);
         console.log('');
+        console.log('Supported device types (settings.new_vm_defaults.images):'.bold.help);
         var images = svmp.config.get('settings:new_vm_defaults:images');
+        var table = new Table({
+            head: ['Device Type']
+        });
         for (var key in images) {
-            console.log('       * '.warn, JSON.stringify(key).warn);
+            table.push([key]);
+            console.log(table.toString());
         }
         svmp.shutdown();
     });
@@ -114,8 +131,8 @@ program
     .action(function (un) {
         console.log('');
         svmp.users.findUser({username: un})
-        .then(svmp.session.clearSessionsForUser)
-        .then(function (u) {
+            .then(svmp.session.clearSessionsForUser)
+            .then(function (u) {
                 console.log('   WARNING: if using openstack, this may result in idle VMs that will not be destroyed!');
                 console.log('   Cleared any sessions for:');
                 console.log('   User'.bold.help);
@@ -148,27 +165,63 @@ program
         );
     });
 
+
+function addUser(un, pw, dev, callback) {
+    console.log('');
+    console.log('Adding a new User...'.help);
+    var images = svmp.config.get('settings:new_vm_defaults:images');
+    if (!dev || dev.length == 0 || !images.hasOwnProperty(dev)) {
+        console.log("Problem creating user: device not recognized (run ./bin/cli devices to see available devices)".error);
+        svmp.shutdown();
+    }
+    else {
+        svmp.users.createUser(un, pw, dev, callback);
+    }
+}
+
 program
     .command('add <username> <password> <device_type>')
     .description('Add a User to system')
     .action(function (un, pw, dev) {
-        console.log('');
-        console.log('    Adding User...'.help);
-        var images = svmp.config.get('settings:new_vm_defaults:images');
-        if (!dev || dev.length == 0 || !images.hasOwnProperty(dev)) {
-            console.log("Problem creating user: device not recognized (run ./bin/cli devices to see available devices)".error);
+        addUser(un, pw, dev, function (err, user) {
+            if (user) {
+                console.log("        Created user: ", user.username, ' Password: ', user.password, ' Device: ', user.device_type);
+                console.log("");
+            } else {
+                console.log("Problem creating user: ", err);
+            }
             svmp.shutdown();
-        }
-        else {
-            svmp.users.createUser(un, pw, dev, function (err, u) {
-                if (u) {
-                    console.log("        Created user: ", u.username, ' Password: ', u.password, ' Device: ', u.device_type);
-                } else {
-                    console.log("Problem creating user: ", err);
-                }
+        });
+    });
+
+program
+    .command('add-user-with-volume <username> <password> <device_type>')
+    .description('Add a new User to the system and create a volume for the User')
+    .action(function (un, pw, dev) {
+        addUser(un, pw, dev, function (err, user) {
+            if (user) {
+                console.log("Created user: ", user.username, ' Password: ', user.password, ' Device: ', user.device_type);
+                console.log("");
+
+                svmp.openstack.createVolumeForUser(user)
+                    .then(function (info) {
+                        return svmp.users.updateUser(info.user);
+                    })
+                    .then(function (u) {
+                        console.log("    Volume created for: ", u.username);
+                        console.log("    ... information saved to User's account ...");
+                        console.log("    NOTE: The Volume is NOT attached to the User.");
+                        svmp.shutdown();
+                    },
+                    function (err) {
+                        console.log("    ERROR creating volume for User ", JSON.stringify(err));
+                        svmp.shutdown();
+                    });
+            } else {
+                console.log("Problem creating user: ", err);
                 svmp.shutdown();
-            });
-        }
+            }
+        });
     });
 
 program
@@ -227,6 +280,31 @@ program
 
 
 program
+    .command('list-volumes')
+    .description('list available volumes')
+    .action(function () {
+
+        svmp.openstack.getVolumes(function (err, r) {
+
+            if (err) {
+                console.log("    Problem listing volumes ", err.message);
+                svmp.shutdown();
+            } else {
+                var table = new Table({
+                    head: ['Name', 'Status', 'ID'], colWidths: [20, 10, 40]
+                });
+
+                for (var i = 0; i < r.length; i++) {
+                    var name = r[i].name || 'unk';
+                    table.push([ name, r[i].status, r[i].id]);
+                }
+                console.log(table.toString());
+                svmp.shutdown();
+            }
+        });
+    });
+
+program
     .command('volume-create <username>')
     .description('Create and assign a Volume to a user based on the gold snapshot id in config-local')
     .action(function (un) {
@@ -245,7 +323,7 @@ program
                 svmp.shutdown();
             },
             function (err) {
-                console.log("    ERROR creating volume for User ", err.message);
+                console.log("    ERROR creating volume for User ", JSON.stringify(err));
                 svmp.shutdown();
             });
     });
@@ -299,41 +377,51 @@ program
     .action(function () {
 
         console.log('');
-        console.log('    Image flavors available:');
+        console.log('Image flavors available'.help);
 
         svmp.openstack.getFlavors(function (err, allflavors) {
             if (err) {
                 console.log("ERROR: ", err);
             } else {
+                var flavorTable = new Table({
+                    head: ['Name', 'ID']
+                });
                 for (i = 0; i < allflavors.length; i++) {
                     var o = allflavors[i];
-                    var s = "      *    ID: " + o._id + '  Name: ' + o.name;
-                    console.log(s.verbose);
+                    flavorTable.push([o.name, o._id]);
                 }
+                console.log(flavorTable.toString());
                 console.log('');
-                console.log("    NOTE: Use the ID value (example: 1) when choosing a Flavor");
+                console.log("NOTE: Use the ID value when choosing a Flavor".warn);
                 console.log('');
 
-                console.log('    Openstack images available:');
+                console.log('Images available:'.help);
                 svmp.openstack.getImages(function (err, r) {
                     if (r) {
+                        var imgTable = new Table({
+                            head: ['Name', 'ID']
+                        });
                         for (i = 0; i < r.length; i++) {
                             var o = r[i];
-                            var s = "      *    ID: " + o._id + '  Name: ' + o.name;
-                            console.log(s.verbose);
+                            imgTable.push([o.name, o._id]);
+                            //var s = "      *    ID: " + o._id + '  Name: ' + o.name;
+                            //console.log(s.verbose);
                         }
+                        console.log(imgTable.toString());
                         console.log('');
+                        svmp.shutdown();
                     } else {
 
                         console.log('Error: ', err);
                         console.log('');
+                        svmp.shutdown();
                     }
                 });
 
 
             }
         });
-        svmp.shutdown();
+        //svmp.shutdown();
     });
 
 
