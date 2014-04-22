@@ -146,7 +146,33 @@ module.exports = {
     },
     // Video Information sent from Proxy to Client
     webrtc: {
-        ice: { iceServers: [{url: 'stun:127.0.0.1:3478'}]}, // change IP and port to match your STUN server
+        ice: { iceServers: [
+                {
+                    // ex: basic STUN server without authentication
+                    "url": "stun:127.0.0.1:3478"
+                },
+                {
+                    // ex: STUN server with a credential
+                    "url": "stun:127.0.0.1:3478"
+                    "password": "stun-credential",
+                },
+                {
+                    // ex: TURN server (new clients)
+                    "url": "turn:127.0.0.1:3478",
+                    "username": "turn-user",
+                    "password": "turn-password",
+                },
+                {
+                    // ex: TURN server (old clients)
+                    // Android clients through 1.3.x were based on a AppRTCDemo version that
+                    // specified the username within the url and not as a separate field.
+                    // This form with the username specified both ways makes the server work
+                    // with both the 1.3 Android and iOS client.
+                    "url": "turn:turn-user@127.0.0.1:3478",
+                    "username": "turn-user",
+                    "password": "turn-password",
+                },
+        ]},
         video: { audio: true, video: { mandatory: {}, optional: []}},
         pc: {optional: [{DtlsSrtpKeyAgreement: true}]}
     }

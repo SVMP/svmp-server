@@ -205,6 +205,12 @@ module.exports = {
                                         "required" : true,
                                         // TODO: add pattern validation for stun:host:port URL
                                         "type" : "string"
+                                    },
+                                    "username" : {
+                                        "type" : "string"
+                                    },
+                                    "password" : {
+                                        "type" : "string"
                                     }
                                 }
                             }
