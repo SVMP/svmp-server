@@ -64,6 +64,11 @@ setInterval (
         svmp.config.get('settings:vm_check_interval') * 1000
 );
 
+// helper function to pass to Q that prints messages from Error objects
+function printErr(e) {
+    svmp.logger.error(e.message);
+}
+
 function onConnection(socket) {
     var authenticator;
 
