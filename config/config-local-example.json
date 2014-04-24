@@ -1,0 +1,99 @@
+{"settings": {
+    "db": {
+        "production": "mongodb://localhost/svmp_proxy_db",
+        "test": "mongodb://localhost/svmp_proxy_db_test"
+    },
+    "port": 8002,
+
+    "vm_port": 8001,
+
+    "tls_proxy": true,
+
+    "tls_certificate": "server-cert.pem",
+
+    "tls_private_key": "server-key.pem",
+
+    "tls_private_key_pass": "",
+
+    "use_tls_user_auth": true,
+
+    "tls_ca_cert": "ca-cert.pem",
+
+    "max_session_length": 21600,
+
+    "session_token_ttl": 300,
+
+    "session_check_interval": 60,
+
+    "vm_idle_ttl": 3600,
+
+    "vm_check_interval": 300,
+
+    "use_pam": false,
+
+    "pam_service": "svmp",
+
+    "sendmail": false,
+
+    "smtp": "",
+
+    "admincontact": "",
+
+    "log_file": "proxy_log.txt",
+
+    "log_level": "debug",
+
+    "log_request_filter": ["SENSOREVENT", "TOUCHEVENT"],
+
+    "openstack": {
+        "authUrl": "http://localhost:5000/",
+        "username": "test",
+        "password": "test",
+        "tenantId": "0123456789abcdef0123456789abcdef",
+        "tenantName": "test",
+        "region": "RegionOne"
+    },
+
+    "new_vm_defaults": {
+        "images": {},
+        "vmflavor": "1",
+        "goldsnapshotId": "",
+        "goldsnapshotSize": 6,
+        "use_floating_ips": false,
+        "floating_ip_pool": "nova",
+        "pollintervalforstartup": 2000
+    }
+},
+    "webrtc": {
+        "ice": {
+            "iceServers": [
+                {
+                    "url": "stun:127.0.0.1:3478"
+                }
+                {
+                    "url": "stun:127.0.0.2:3478"
+                    "password": "stun-credential",
+                },
+                {
+                    "url": "turn:127.0.0.3:3478",
+                    "username": "turn-user",
+                    "password": "turn-password",
+                },
+            ]
+        },
+        "video": {
+            "audio": true,
+            "video": {
+                "mandatory": {},
+                "optional": []
+            }
+        },
+        "pc": {
+            "optional": [
+                {
+                    "DtlsSrtpKeyAgreement": true
+                }
+            ]
+        }
+    }
+}

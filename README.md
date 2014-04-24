@@ -23,13 +23,13 @@ Additionally, on Windows, do the following *in order:*
 1. Download this project
 2. Within the root directory of this project, run this command to install the project and download dependencies:
 
-        $ npm install
+       $ npm install
 
 ### Configuration
 
-1. Create a file named *config/config-local.js* using *config/config-local.js.example* as a template.  Please
-read through the comments on config-local.js.example for a description of the fields
-2. Review the various fields in *config/config-local.js* and set them to match your configuration
+1. Create a file named *config/config-local.json* using *config/config-local-example.json.example* as a template. (we need to
+document the setting separately - no comments allowed in json)
+2. Review the various fields in *config/config-local.json* and set them to match your configuration
 
 #### Enable TLS
 
@@ -38,15 +38,15 @@ If you don't have your own CA and you want to use TLS, follow these steps to gen
 1. Make sure you have the Java JDK installed
 2. Open the *utils/generate_tls.sh* script and change the preset passwords for the CA, server, and client keys:
 
-        # Change these variables
-        CA_PKEY_PASS="changeme_cakeypass"
-        SERVER_PKEY_PASS="changeme_serverkeypass"
-        CLIENT_PKEY_PASS="changeme_clientkeypass"
+       # Change these variables
+       CA_PKEY_PASS="changeme_cakeypass"
+       SERVER_PKEY_PASS="changeme_serverkeypass"
+       CLIENT_PKEY_PASS="changeme_clientkeypass"
 
 3. Open the *tls/ca.cnf*, *tls/server.cnf*, and *tls/client.cnf* files  and configure them to your liking
 4. Run the script from the root directory of the project to generate certificates in the *out* directory:
 
-        $ ./utils/generate_tls.sh
+       $ ./utils/generate_tls.sh
 
 5. In *config/config-local.js*, set the `tls_certificate`, `tls_private_key`, and `tls_private_key_pass` values to match your server certificate, private key, and password
 
@@ -82,15 +82,22 @@ If a client connects and they don't already have a VM running, the server will c
 1. Start MongoDB
 2. Start the proxy:
 
-        $ node server.js
+       $ node bin/server.js
 
 ### Adding Users and VMs
 
 * Run the commandline client from the root directory of the project:
 
-        $ ./bin/spm -h
+      $ ./bin/cli.js -h
 
     Run the help command to see a list of all commands
+
+### Running Grunt unit tests
+
+* Install Grunt's command line interface globally, then execute the Grunt task runner
+
+      $ npm install -g grunt-cli
+      $ grunt
 
 ## License
 
