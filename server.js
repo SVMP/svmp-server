@@ -174,6 +174,8 @@ function printErr(e) {
 function onConnection(proxySocket) {
     var gateGuard;
 
+    winston.info("New client connection from " + proxySocket.remoteAddress);
+
     if(settings.tls_proxy)
         winston.verbose("Client connected, using cipher: %s", JSON.stringify(proxySocket.getCipher()));
 
