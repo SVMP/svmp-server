@@ -9,15 +9,15 @@
 
     "tls_proxy": true,
 
-    "tls_certificate": "server-cert.pem",
+    "tls_certificate": "./tls/server-cert.pem",
 
-    "tls_private_key": "server-key.pem",
+    "tls_private_key": "./tls/server-key.pem",
 
     "tls_private_key_pass": "",
 
     "use_tls_user_auth": true,
 
-    "tls_ca_cert": "ca-cert.pem",
+    "tls_ca_cert": "./tls/ca-cert.pem",
 
     "max_session_length": 21600,
 
@@ -69,16 +69,16 @@
             "iceServers": [
                 {
                     "url": "stun:127.0.0.1:3478"
-                }
+                },
                 {
-                    "url": "stun:127.0.0.2:3478"
-                    "password": "stun-credential",
+                    "url": "stun:127.0.0.2:3478",
+                    "password": "stun-credential"
                 },
                 {
                     "url": "turn:127.0.0.3:3478",
                     "username": "turn-user",
-                    "password": "turn-password",
-                },
+                    "password": "turn-password"
+                }
             ]
         },
         "video": {
