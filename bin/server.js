@@ -72,6 +72,8 @@ function printErr(e) {
 function onConnection(socket) {
     var authenticator;
 
+    svmp.logger.info("New client connection from " + socket.remoteAddress);
+
     if(svmp.config.useTlsCertAuth()) {
         var cert = socket.getPeerCertificate();
         authenticator = auth.Authentication.loadStrategy(cert);
