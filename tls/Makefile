@@ -28,8 +28,8 @@ server-verify: server-cert.pem ca-cert.pem
 # Create a test client signed with CA
 test-key.pem:
 	openssl genrsa -out test-key.pem 1024
-test-csr.pem: test-client.cnf test-key.pem
-	openssl req -new -config test-client.cnf -key test-key.pem -out test-csr.pem
+test-csr.pem: client.cnf test-key.pem
+	openssl req -new -config client.cnf -key test-key.pem -out test-csr.pem
 # Self-signed certificate using out SVMP CA
 test-cert.pem: test-csr.pem ca-cert.pem
 	openssl x509 -req \
