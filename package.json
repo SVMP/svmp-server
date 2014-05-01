@@ -31,7 +31,6 @@
     "jsvutil": "latest",
     "to-date": "latest",
     "winston": "latest",
-    "nconf": "latest",
     "cli-table": "latest"
   },
   "optionalDependencies": {
