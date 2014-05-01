@@ -50,5 +50,25 @@ describe('Protocol Test', function () {
         assert.equal(result.type, 'VMREADY');
     });
 
+    it('should handle larger messages', function (){
+        var SID =  "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890";
+        var obj1 = {
+            type: 'AUTH',
+            authRequest: {
+                type: 'AUTHENTICATION',
+                username: 'dave',
+                sessionToken: SID,
+                password: "blahblahblah",
+                securityToken: "1234567890"
+            }
+        };
+
+        var result = svmp.protocol.parseRequest(svmp.protocol.writeRequest(obj1));
+        assert.strictEqual(result.authRequest.username, 'dave');
+        assert.equal(result.type, 'AUTH');
+
+    });
+
+
 });
 
