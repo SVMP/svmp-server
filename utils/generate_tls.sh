@@ -55,9 +55,30 @@ echo "1. CREATE PRIVATE KEYS"
 rm -f "$CA_PKEY"
 rm -f "$C_PKEY"
 rm -f "$S_PKEY"
-openssl genrsa -des3 -passout "pass:$CA_PKEY_PASS" -out "$CA_PKEY" $CA_PKEY_BITS
-openssl genrsa -des3 -passout "pass:$CLIENT_PKEY_PASS" -out "$C_PKEY" $CLIENT_PKEY_BITS
-openssl genrsa -des3 -passout "pass:$SERVER_PKEY_PASS" -out "$S_PKEY" $SERVER_PKEY_BITS
+
+echo "1.1. CA key..."
+if [ -n "$CA_PKEY_PASS" ]; then
+    openssl genrsa -des3 -passout "pass:$CA_PKEY_PASS" -out "$CA_PKEY" $CA_PKEY_BITS
+else
+    echo "  WARNING: NO PASSWORD IS SET!"
+    openssl genrsa -out "$CA_PKEY" $CA_PKEY_BITS
+fi
+
+echo "1.2. Client key..."
+if [ -n "$CLIENT_PKEY_PASS" ]; then
+    openssl genrsa -des3 -passout "pass:$CLIENT_PKEY_PASS" -out "$C_PKEY" $CLIENT_PKEY_BITS
+else
+    echo "  WARNING: NO PASSWORD IS SET!"
+    openssl genrsa -out "$C_PKEY" $CLIENT_PKEY_BITS
+fi
+
+echo "1.3. Server key..."
+if [ -n "$SERVER_PKEY_PASS" ]; then
+    openssl genrsa -des3 -passout "pass:$SERVER_PKEY_PASS" -out "$S_PKEY" $SERVER_PKEY_BITS
+else
+    echo "  WARNING: NO PASSWORD IS SET!"
+    openssl genrsa -out "$S_PKEY" $SERVER_PKEY_BITS
+fi
 echo ""
 
 ####################################################################

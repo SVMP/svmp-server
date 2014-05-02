@@ -67,9 +67,9 @@ describe("Test TLS Server/Socket", function () {
 
 
     it('should process svmpsockets', function (done) {
-        var keyFile = path.join(__dirname,'../../tls','test-key.pem');
-        var certFile = path.join(__dirname,'../../tls','test-cert.pem');
-        var caFile = path.join(__dirname,'../../tls','ca-cert.pem');
+        var keyFile = svmp.config.get('settings:tls_private_key');
+        var certFile = svmp.config.get('settings:tls_certificate');
+        var caFile = svmp.config.get('settings:tls_ca_cert');
 
         /** Setup up client to talk to server */
         var options = {};
@@ -77,7 +77,7 @@ describe("Test TLS Server/Socket", function () {
         options.key = fs.readFileSync(keyFile);
         options.cert = fs.readFileSync(certFile);
         options.ca = fs.readFileSync(caFile);
-        options.passphrase = '';
+        options.passphrase = svmp.config.get('settings:tls_private_key_pass');
         options.rejectUnauthorized = false;
 
         var client = new svmpSocket.SvmpSocket(undefined, options);
