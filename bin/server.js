@@ -74,7 +74,13 @@ function onConnection(socket) {
 
     if(svmp.config.useTlsCertAuth()) {
         var cert = socket.getPeerCertificate();
-        authenticator = auth.Authentication.loadStrategy(cert);
+        if (socket.isAuthorized()) {
+            svmp.logger.verbose("Client presented certificate: " + JSON.stringify(cert, null, 2));
+            authenticator = auth.Authentication.loadStrategy(cert);
+        } else {
+            svmp.logger.error("User certificate failed validation: " + JSON.stringify(cert, null, 2));
+            authenticator = auth.Authentication.loadStrategy({});
+        }
     } else {
         authenticator = auth.Authentication.loadStrategy();
     }

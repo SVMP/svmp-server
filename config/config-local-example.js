@@ -23,8 +23,8 @@ module.exports = {
 
         // SSL certificate and private key paths
         // (required if tls_proxy == true)
-        tls_certificate: './tls/server-cert.pem',
-        tls_private_key: './tls/server-key.pem',
+        tls_certificate: 'out/server_cert.pem',
+        tls_private_key: 'out/server_pkey.pem',
 
         // SSL private key password
         // (if the server private key file is password protected)
@@ -36,7 +36,7 @@ module.exports = {
 
         // TLS CA Cert to validate user certs against
         // only used if use_tls_user_auth == true
-        tls_ca_cert: './tls/ca-cert.pem',
+        tls_ca_cert: 'out/ca_cert.pem',
 
         // Maximum length of a client session (in seconds) before it is
         // forcibly disconnected.
