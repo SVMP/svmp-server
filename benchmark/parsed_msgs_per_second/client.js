@@ -18,7 +18,8 @@
  */
 var
     svmp = require('../../lib/svmp'),
-    svmpSocket = require('../../lib/server/svmpsocket');
+    framedSocket = require('../../lib/server/framedsocket'),
+    net = require('net');
 
 /**
  * Measure messages per second between SVMPSocket client and server.
@@ -31,7 +32,7 @@ svmp.config.set('settings:tls_proxy', false);
 
 var
     port = svmp.config.get('settings:port'),
-    client = new svmpSocket.SvmpSocket(),
+    client = framedSocket.wrap(new net.Socket());
     counter = 0,
     interval = 5000,
     totalTestTime = 60000,
@@ -71,23 +72,23 @@ client.on('message', function (msg) {
         counter++;
     }
 
-    client.sendRequest({
+    client.write(svmp.protocol.writeRequest({
         type: 'AUTH',
         authRequest: {
             type: 'AUTHENTICATION',
             username: 'dave'
         }
-    });
+    }));
 });
 
-client.on('start', function () {
-    client.sendRequest({
+client.on('connect', function () {
+    client.write(svmp.protocol.writeRequest({
         type: 'AUTH',
         authRequest: {
             type: 'AUTHENTICATION',
             username: 'dave'
         }
-    });
+    }));
     count();
     setTimeout(finish, totalTestTime);
 });

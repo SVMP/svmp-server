@@ -18,26 +18,21 @@
  */
 var
     svmp = require('../../lib/svmp'),
-    svmpSocket = require('../../lib/server/svmpsocket');
+    framedSocket = require('../../lib/server/framedsocket');
 
 svmp.init();
 
 svmp.config.set('settings:tls_proxy', false);
-// Turning off logging increases through put by ~ 500 msg/s
-svmp.config.set('settings:log_level', 'none');
-
+svmp.config.set('settings:log_level', 'debug');
 var port = svmp.config.get('settings:port');
 
-svmpSocket.createServer(undefined, function(sock) {
+framedSocket.createServer(undefined, function(sock) {
 
     sock.on('message', function (msg) {
         var r = svmp.protocol.parseRequest(msg);
         // Only send a response to valid messages
-        if( r.authRequest.username === 'dave' ){
-            sock.sendResponse({
-                type: 'VMREADY',
-                message: "test1"
-            });
+        if(r.type === 'WEBRTC' ) {
+            sock.write(msg);
         }
     });
 

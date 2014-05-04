@@ -4,15 +4,10 @@ Simple benchmarks to test the SVMPSocket implementation.
 
 Tests were run on localhost
 
+*Large messages:*  Handles large messages. only counts complete messages: ~1166 msgs/second
+
 *Parsed messages:* Parses protobuf messages and only counts complete messages: ~ 2234 msgs/second
 
-*Raw messages:*  Sends protobuf messages round trip (no parsing): ~ 12,774 msgs/second
-
-*TLS:* All messages sent over TLS.  Parses protobuf messages and only counts complete messages: ~ 1516 msgs/second
-
-
-
-*Large Messages* Average msgs/sec:  1041.7818181818182 (Using updated approach for reading packets 1 May)
 
 
 

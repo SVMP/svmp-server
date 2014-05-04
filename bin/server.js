@@ -21,7 +21,7 @@
 var
     svmp = require('../lib/svmp'),
     proxy = require('../lib/server/proxy'),
-    svmpSocket = require('../lib/server/svmpsocket'),
+    framedSocket = require('../lib/server/framedsocket'),
     auth = require('../lib/authentication');
 
 svmp.init();
@@ -74,7 +74,7 @@ function onConnection(socket) {
 
     if(svmp.config.useTlsCertAuth()) {
         var cert = socket.getPeerCertificate();
-        if (socket.isAuthorized()) {
+        if (socket.authorized) {
             svmp.logger.verbose("Client presented certificate: " + JSON.stringify(cert, null, 2));
             authenticator = auth.Authentication.loadStrategy(cert);
         } else {
@@ -88,5 +88,5 @@ function onConnection(socket) {
     proxy.handleConnection(socket,authenticator);
 }
 
-svmpSocket.createServer(undefined,onConnection).listen(port);
+framedSocket.createServer(undefined,onConnection).listen(port);
 svmp.logger.info('Proxy running on port %d Using TLS? %s',port,with_tls);

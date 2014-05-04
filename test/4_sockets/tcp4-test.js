@@ -18,7 +18,8 @@
  */
 var
     svmp = require('../../lib/svmp'),
-    svmpSocket = require('../../lib/server/svmpsocket'),
+    framedSocket = require('../../lib/server/framedsocket'),
+    net = require('net'),
     assert = require('assert');
 
 PORT = 8001;
@@ -30,16 +31,16 @@ describe("Test TCP4 Server/Socket", function () {
         // Change the settings at runtime
         svmp.config.set('settings:tls_proxy', false);
 
-        instance = svmpSocket.createServer(undefined, function (sock) {
+        instance = framedSocket.createServer(undefined, function (sock) {
             sock.on('message', function (msg) {
                 var r = svmp.protocol.parseRequest(msg);
 
                 assert.strictEqual(r.authRequest.username, 'dave');
 
-                sock.sendResponse({
+                sock.write(svmp.protocol.writeResponse({
                     type: 'VMREADY',
                     message: "test1"
-                });
+                }));
             });
 
         }).listen(PORT);
@@ -58,7 +59,7 @@ describe("Test TCP4 Server/Socket", function () {
     it('should process svmpsockets', function (done) {
 
         /** Setup up client to talk to server */
-        var client = new svmpSocket.SvmpSocket();
+        var client = framedSocket.wrap(new net.Socket());
 
         client.on('message', function (msg) {
             var r = svmp.protocol.parseResponse(msg);
@@ -66,14 +67,14 @@ describe("Test TCP4 Server/Socket", function () {
             done();
         });
 
-        client.on('start', function () {
-            client.sendRequest({
+        client.on('connect', function () {
+            client.write(svmp.protocol.writeRequest({
                 type: 'AUTH',
                 authRequest: {
                     type: 'AUTHENTICATION',
                     username: 'dave'
                 }
-            });
+            }));
         });
 
         client.connect(PORT);

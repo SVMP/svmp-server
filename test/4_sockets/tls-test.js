@@ -18,10 +18,9 @@
  */
 var
     svmp = require('../../lib/svmp'),
-    svmpSocket = require('../../lib/server/svmpsocket'),
     assert = require('assert'),
     fs = require('fs'),
-    path = require('path'),
+    framedSocket = require('../../lib/server/framedsocket'),
     tls = require('tls');
 
 PORT = 8002;
@@ -30,34 +29,28 @@ describe("Test TLS Server/Socket", function () {
     var instance;
 
     before(function (done) {
-
         // Change the settings at runtime
         svmp.config.set('settings:tls_proxy', true);
         // No client authentication for this test
         svmp.config.set('settings:use_tls_user_auth', false);
 
-        instance = svmpSocket.createServer(undefined, function (sock) {
-
-
+        instance = framedSocket.createServer(undefined, function (sock) {
             sock.on('message', function (msg) {
                 var r = svmp.protocol.parseRequest(msg);
 
                 assert.strictEqual(r.authRequest.username, 'dave');
 
-                sock.sendResponse({
+                sock.write(svmp.protocol.writeResponse({
                     type: 'VMREADY',
                     message: "test1"
-                });
+                }));
             });
 
         }).listen(PORT);
 
-
         instance.on('listening', function () {
             done();
         });
-
-
     });
 
     after(function (done) {
@@ -66,7 +59,7 @@ describe("Test TLS Server/Socket", function () {
     });
 
 
-    it('should process svmpsockets', function (done) {
+    it('should process secure svmpsockets', function (done) {
         var keyFile = svmp.config.get('settings:tls_private_key');
         var certFile = svmp.config.get('settings:tls_certificate');
         var caFile = svmp.config.get('settings:tls_ca_cert');
@@ -80,22 +73,21 @@ describe("Test TLS Server/Socket", function () {
         options.passphrase = svmp.config.get('settings:tls_private_key_pass');
         options.rejectUnauthorized = false;
 
-        var client = new svmpSocket.SvmpSocket(undefined, options);
-        client.on('start', function (msg) {
-            client.sendRequest({type: 'AUTH',
+        var client = framedSocket.wrap(tls.connect(PORT, options,function() {
+            client.write(svmp.protocol.writeRequest({type: 'AUTH',
                 authRequest: {
                     type: 'AUTHENTICATION',
                     username: 'dave'
-                }});
+                }}));
 
-        });
+        }));
+
         client.on('message', function (msg) {
             var r = svmp.protocol.parseResponse(msg);
             assert.strictEqual(r.message, 'test1');
             done();
         });
 
-        client.connect(PORT);
     });
 
 });

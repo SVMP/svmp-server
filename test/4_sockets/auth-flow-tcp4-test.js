@@ -17,8 +17,9 @@
  *
  */
 var
-    svmp = require('../../lib/svmp');
-    svmpSocket = require('../../lib/server/svmpsocket'),
+    svmp = require('../../lib/svmp'),
+    framedSocket = require('../../lib/server/framedsocket'),
+    net = require('net'),
     auth = require('../../lib/authentication'),
     assert = require('assert');
 
@@ -30,7 +31,7 @@ var PROXYREADY = 4;
 
 function flow(clientSocket) {
     var state = UNAUTHENTICATED;
-    var vmSocket = new svmpSocket.SvmpSocket();
+    var vmSocket = framedSocket.wrap(new net.Socket());
     var authenticator = auth.Authentication.loadStrategy();
 
     clientSocket.on('message', function (message) {
@@ -46,9 +47,7 @@ function flow(clientSocket) {
 
                         var msg = {type: 'AUTH', authResponse: {type: "AUTH_OK"}};
 
-                        clientSocket.sendResponse(msg);
-
-
+                        clientSocket.write(svmp.protocol.writeResponse(msg));
                     }, function (err) {
                         var error_resp = proto.writeResponse({type: 'AUTH', authResponse: {type: "AUTH_FAIL"}});
                         clientSocket.end(error_resp);
@@ -59,12 +58,12 @@ function flow(clientSocket) {
                 var request = svmp.protocol.parseRequest(message);
                 if (request.type === 'VIDEO_PARAMS') {
                     // send json VIDEO_INFO
-                    vmSocket.sendResponse({"type": "VIDSTREAMINFO", "videoInfo": videoResponseObj});
+                    vmSocket.write(svmp.protocol.writeResponse({"type": "VIDSTREAMINFO", "videoInfo": videoResponseObj}));
                     state = PROXYREADY;
                 }
                 break;
             case PROXYREADY:
-                vmSocket.sendRaw(message);
+                vmSocket.write(message);
                 break;
         }
 
@@ -78,10 +77,9 @@ function flow(clientSocket) {
                 state = VMREADY_SENT;
             }
         }
-        clientSocket.sendResponse(message);
+        clientSocket.write(message);
 
     });
-
 }
 
 
@@ -89,12 +87,10 @@ describe("Test SVMP Server/Socket Authentication flow", function () {
     var instance;
 
     before(function (done) {
-
         // Change the settings at runtime
         svmp.config.set('settings:tls_proxy', false);
 
-        instance = svmpSocket.createServer(undefined, flow).listen(PORT);
-
+        instance = framedSocket.createServer(undefined, flow).listen(PORT);
 
         instance.on('listening', function () {
             done();
@@ -108,9 +104,8 @@ describe("Test SVMP Server/Socket Authentication flow", function () {
 
 
     it('should process svmpsockets', function (done) {
-
         /** Setup up client to talk to server */
-        var client = new svmpSocket.SvmpSocket();
+        var client = framedSocket.wrap(new net.Socket());
 
         client.on('message', function (msg) {
             var r = svmp.protocol.parseResponse(msg);
@@ -119,17 +114,17 @@ describe("Test SVMP Server/Socket Authentication flow", function () {
             done();
         });
 
-        client.on('start', function () {
-            client.sendRequest({
+        client.on('connect', function () {
+
+            client.write(svmp.protocol.writeRequest({
                 type: 'AUTH',
                 authRequest: {
                     type: 'AUTHENTICATION',
                     username: 'dave',
                     password: 'dave'
                 }
-            });
+            }));
         });
-
         client.connect(PORT);
     });
 
