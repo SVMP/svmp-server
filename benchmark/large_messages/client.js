@@ -90,8 +90,9 @@ client.on('message', function (msg) {
     if(r.type === 'WEBRTC') {
         counter++;
     }
-
-    client.write(bufferRequest.slice(0,100));
+    //client.write(bufferRequest);
+    client.write(bufferRequest.slice(0,1));
+    client.write(bufferRequest.slice(1,100));
     client.write(bufferRequest.slice(100,1000));
     client.write(bufferRequest.slice(1000,bufferRequest.length));
 });
