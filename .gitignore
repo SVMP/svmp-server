@@ -8,6 +8,7 @@ config/config-local.json
 out/
 *.txt
 *.log
+*.srl
 
 # Eclipse project files
 .project

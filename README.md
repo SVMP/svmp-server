@@ -27,9 +27,9 @@ Additionally, on Windows, do the following *in order:*
 
 ### Configuration
 
-1. Create a file named *config/config-local.json* using *config/config-local-example.json.example* as a template. (we need to
-document the setting separately - no comments allowed in json)
-2. Review the various fields in *config/config-local.json* and set them to match your configuration
+1. Create a file named *config/config-local.js* using *config/config-local-example.js* as a template.  Please
+read through the comments on config-local-example.js for a description of the fields
+2. Review the various fields in *config/config-local.js* and set them to match your configuration
 
 #### Enable TLS
 
@@ -101,7 +101,7 @@ If a client connects and they don't already have a VM running, the server will c
 
 ## License
 
-Copyright (c) 2012-2013, The MITRE Corporation, All Rights Reserved.
+Copyright (c) 2012-2014, The MITRE Corporation, All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

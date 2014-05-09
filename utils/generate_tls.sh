@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2013 The MITRE Corporation, All Rights Reserved.
+# Copyright 2013-2014 The MITRE Corporation, All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this work except in compliance with the License.
@@ -19,7 +19,7 @@
 
 # Change these variables
 CA_PKEY_PASS="changeme_cakeypass"
-SERVER_PKEY_PASS="changeme_serverkeypass"
+SERVER_PKEY_PASS=""
 CLIENT_PKEY_PASS="changeme_clientkeypass" # Only used when 'use_tls_user_auth' is enabled
 
 # If you set these higher than 1024, you will need the JCE unlimited strength files installed
