@@ -23,7 +23,7 @@
     "bytebuffer": "latest",
     "protobufjs": "latest",
     "q": "latest",
-    "mongoose": "latest",
+    "mongoose": "3.8.3",
     "commander": "latest",
     "colors": "latest",
     "pkgcloud": "git+https://github.com/SVMP/pkgcloud.git#0.9.4-svmp",
