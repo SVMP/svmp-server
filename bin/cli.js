@@ -94,8 +94,8 @@ program
         });
         for (var key in images) {
             table.push([key]);
-            console.log(table.toString());
         }
+        console.log(table.toString());
         svmp.shutdown();
     });
 
