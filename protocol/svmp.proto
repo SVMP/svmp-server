@@ -1,7 +1,7 @@
 // svmp.proto 
 // Client to Proxy Server protocol
 
-// Copyright (c) 2012-2014, The MITRE Corporation, All Rights Reserved.
+// Copyright (c) 2012-2013, The MITRE Corporation, All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ message Request
     WEBRTC        = 9;
     ROTATION_INFO = 10;
     PING          = 11; // client-initiated ping measurement (ms)
+    TIMEZONE      = 12;
   }
 
   optional AuthRequest authRequest = 2;
@@ -50,6 +51,7 @@ message Request
   optional RotationInfo rotationInfo = 10;
   optional Ping pingRequest = 11;
   optional VideoStreamInfo videoInfo = 12;
+  optional string timezoneId = 13;
 }
 
 // Server to client message wrapper
