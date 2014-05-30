@@ -34,8 +34,8 @@
     "cli-table": "latest"
   },
   "optionalDependencies": {
-    "authenticate-pam": "latest",
-    "nan": "~0.8.0"
+    "nan": "1.1.0",
+    "authenticate-pam": "0.2.2"
   },
   "devDependencies": {
     "grunt": "latest",
