@@ -147,10 +147,20 @@ message TouchEvent {
   required int32 action = 1;
   repeated PointerCoords items = 2;
 
+  optional int64 downTime = 3;
+  optional int64 eventTime = 4;
+  repeated HistoricalEvent historical = 5; 
+  optional int32 edgeFlags = 6;
+
   message PointerCoords {
     required int32 id = 1;
     required float x = 2;
     required float y = 3;
+  }
+
+  message HistoricalEvent {
+    required int64 eventTime = 1;
+    repeated PointerCoords coords = 2;
   }
 }
 
