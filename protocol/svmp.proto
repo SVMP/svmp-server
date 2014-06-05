@@ -37,6 +37,7 @@ message Request
     ROTATION_INFO = 10;
     PING          = 11; // client-initiated ping measurement (ms)
     TIMEZONE      = 12;
+    APPS          = 13; // client request for available apps on the VM
   }
 
   optional AuthRequest authRequest = 2;
@@ -52,6 +53,7 @@ message Request
   optional Ping pingRequest = 11;
   optional VideoStreamInfo videoInfo = 12;
   optional string timezoneId = 13;
+  optional AppsRequest apps = 14;
 }
 
 // Server to client message wrapper
@@ -72,6 +74,7 @@ message Response
     VIDEOPAUSE    = 10;
     WEBRTC        = 11; // WebRTC signalling message
     PING          = 12; // response to client ping measurement (ms)
+    APPS          = 13; // response to client request for available apps
   }
 
   required ResponseType type = 1;
@@ -83,6 +86,7 @@ message Response
   
   optional LocationResponse locationResponse = 6;
   optional Ping pingResponse = 7;
+  optional AppsResponse apps = 8;
 
   optional ScreenInfo screenInfo = 16;
   optional VideoStreamInfo videoInfo = 17;
@@ -405,4 +409,38 @@ message RotationInfo  {
 // C<->S
 message Ping {
   required int64 startDate = 1;
+}
+
+//=====================================================================
+// App Information (for use in Single App Mode)
+//=====================================================================
+
+// C->S
+message AppsRequest {
+  enum AppsRequestType {
+    REFRESH = 1;
+    LAUNCH  = 2;
+  }
+
+  required AppsRequestType type = 1;
+  // used for type REFRESH
+  repeated AppInfo current      = 2; // list of current apps, to be used during refresh
+  optional int32 screenDensity  = 3; // the screen density of the device
+  // used for type LAUNCH
+  optional string pkgName       = 4; // what app to launch, if any
+}
+
+// S->C
+message AppsResponse {
+  repeated AppInfo new     = 1; // list of apps to insert
+  repeated AppInfo updated = 2; // list of apps to update (changed name/icon?)
+  repeated string removed  = 3; // list of apps to remove (only pkgName needed)
+}
+
+// C<->S
+message AppInfo {
+  required string pkgName = 1; // primary key, ex: org.mitre.svmp.client
+  required string appName = 2; // user-friendly name, ex: SVMP Client
+  optional bytes icon     = 3; // null in Request
+  optional bytes iconHash = 4; // null in Response
 }
