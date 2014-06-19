@@ -20,18 +20,18 @@
     "npm": "1.2"
   },
   "dependencies": {
-    "bytebuffer": "latest",
-    "protobufjs": "latest",
-    "q": "latest",
+    "bytebuffer": "~2.3.1",
+    "protobufjs": "~2.0.5",
+    "q": "~1.0.1",
     "mongoose": "3.8.3",
-    "commander": "latest",
-    "colors": "latest",
+    "commander": "~2.2.0",
+    "colors": "~0.6.2",
     "pkgcloud": "git+https://github.com/SVMP/pkgcloud.git#0.9.4-svmp",
-    "JSV": "latest",
-    "jsvutil": "latest",
+    "JSV": "~4.0.2",
+    "jsvutil": "~0.0.1",
     "to-date": "latest",
-    "winston": "latest",
-    "cli-table": "latest"
+    "winston": "~0.7.3",
+    "cli-table": "~0.3.0"
   },
   "optionalDependencies": {
     "nan": "1.1.0",
