@@ -49,7 +49,7 @@ function flow(clientSocket) {
 
                         clientSocket.write(svmp.protocol.writeResponse(msg));
                     }, function (err) {
-                        var error_resp = proto.writeResponse({type: 'AUTH', authResponse: {type: "AUTH_FAIL"}});
+                        var error_resp = svmp.protocol.writeResponse({type: 'AUTH', authResponse: {type: "AUTH_FAIL"}});
                         clientSocket.end(error_resp);
                     }).done();
 
@@ -121,7 +121,7 @@ describe("Test SVMP Server/Socket Authentication flow", function () {
                 authRequest: {
                     type: 'AUTHENTICATION',
                     username: 'dave',
-                    password: 'dave'
+                    password: 'dave2' // we've passed the authentication test by now, so password has changed
                 }
             }));
         });

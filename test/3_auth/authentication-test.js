@@ -45,8 +45,8 @@ describe("Authentication/Session logic spec", function () {
 
     });
 
-
-    it('should pass authentication and create a new session', function (done) {
+    // by default, when a user is created, the "password_change_needed" attribute is set to "true"
+    it('when receiving AUTHENTICATION, should return NEED_PASSWORD_CHANGE when a new password is required', function (done) {
         svmp.config.set('settings:use_pam', false);
         svmp.config.set('settings:use_tls_user_auth', false);
 
@@ -61,6 +61,78 @@ describe("Authentication/Session logic spec", function () {
             }
         };
 
+        var requestObj = svmp.protocol.parseRequest(svmp.protocol.writeRequest(protoMsg));
+
+        a.authenticate(requestObj)
+            .fail(function (err) {
+                assert.strictEqual(err.responseType, 'NEED_PASSWORD_CHANGE')
+            }).then(done, done);
+    });
+
+    it('when receiving PASSWORD_CHANGE, should fail with bad password', function (done) {
+        svmp.config.set('settings:use_pam', false);
+        svmp.config.set('settings:use_tls_user_auth', false);
+
+        var a = auth.Authentication.loadStrategy();
+
+        var protoMsg = {
+            type: 'AUTH',
+            authRequest: {
+                type: 'PASSWORD_CHANGE',
+                username: 'dave',
+                password: 'bad',
+                newPassword: 'dave2'
+            }
+        };
+
+        var requestObj = svmp.protocol.parseRequest(svmp.protocol.writeRequest(protoMsg));
+
+        a.authenticate(requestObj)
+            .fail(function (err) {
+                assert.strictEqual(err.responseType, 'PASSWORD_CHANGE_FAIL')
+            }).then(done, done);
+    });
+
+    it('when receiving PASSWORD_CHANGE, should pass and change password', function (done) {
+        svmp.config.set('settings:use_pam', false);
+        svmp.config.set('settings:use_tls_user_auth', false);
+
+        var a = auth.Authentication.loadStrategy();
+
+        var protoMsg = {
+            type: 'AUTH',
+            authRequest: {
+                type: 'PASSWORD_CHANGE',
+                username: 'dave',
+                password: 'dave',
+                newPassword: 'dave2'
+            }
+        };
+
+        var requestObj = svmp.protocol.parseRequest(svmp.protocol.writeRequest(protoMsg));
+
+        a.authenticate(requestObj)
+            .then(function (r) {
+                assert.ok(r.session.sid);
+                assert.equal(r.user.username, 'dave');
+            }).then(done, done);
+    });
+
+    it('when receiving AUTHENTICATION, should pass and create a new session', function (done) {
+        svmp.config.set('settings:use_pam', false);
+        svmp.config.set('settings:use_tls_user_auth', false);
+
+        var a = auth.Authentication.loadStrategy();
+
+        var protoMsg = {
+            type: 'AUTH',
+            authRequest: {
+                type: 'AUTHENTICATION',
+                username: 'dave',
+                password: 'dave2'
+            }
+        };
+
 
         var requestObj = svmp.protocol.parseRequest(svmp.protocol.writeRequest(protoMsg));
 
@@ -72,7 +144,7 @@ describe("Authentication/Session logic spec", function () {
 
     });
 
-    it('should fail authentication on bad username', function (done) {
+    it('when receiving AUTHENTICATION, should fail with bad username', function (done) {
         svmp.config.set('settings:use_pam', false);
         svmp.config.set('settings:use_tls_user_auth', false);
 
@@ -92,14 +164,14 @@ describe("Authentication/Session logic spec", function () {
 
         a.authenticate(requestObj)
             .fail(function (err) {
-                assert.strictEqual(err, 'Bad Username or Password')
+                assert.strictEqual(err.responseType, 'AUTH_FAIL')
             }).then(done, done);
 
     });
 
     // Can't test this because of how lastAction works in session create..
 
-    it('should re-authenticate an existing session without login', function (done) {
+    it('when sending SESSION_TOKEN, should re-authenticate an existing session without login', function (done) {
         svmp.config.set('settings:use_pam', false);
         svmp.config.set('settings:use_tls_user_auth', false);
         svmp.config.set('settings:max_session_length', 300); // make sure the max session length is long enough to test
@@ -123,9 +195,8 @@ describe("Authentication/Session logic spec", function () {
                     var protoMsg = {
                         type: 'AUTH',
                         authRequest: {
-                            type: 'AUTHENTICATION',
-                            username: '',
-                            password: '',
+                            type: 'SESSION_TOKEN',
+                            username: 'dave',
                             sessionToken: sid
                         }
                     };

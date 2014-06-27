@@ -305,14 +305,16 @@ message AuthRequest {
   required AuthRequestType type = 1;
 
   enum AuthRequestType {
-    SESSION_TOKEN  = 0;
-    AUTHENTICATION = 1; // any combination of auth input (password, security token, etc)
+    SESSION_TOKEN   = 0;
+    AUTHENTICATION  = 1; // any combination of auth input (password, security token, etc)
+    PASSWORD_CHANGE = 2;
   }
 
   required string username      = 2;
   optional string sessionToken  = 3;
   optional string password      = 4;
   optional string securityToken = 5;
+  optional string newPassword   = 6; // only used with PASSWORD_CHANGE type
 }
 
 // S->C
@@ -324,6 +326,8 @@ message AuthResponse {
     AUTH_FAIL            = 1; // sent in response to an AuthRequest
     SESSION_MAX_TIMEOUT  = 2; // sent when the session times out
     SESSION_IDLE_TIMEOUT = 3; // sent when the session times out
+    NEED_PASSWORD_CHANGE = 4; // sent when user needs to change their password
+    PASSWORD_CHANGE_FAIL = 5; // sent when a PASSWORD_CHANGE request auth fails
   }
 
   optional SessionInfo sessionInfo = 2; // sent with an AUTH_OK message
