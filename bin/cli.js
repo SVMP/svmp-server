@@ -26,7 +26,7 @@
 var
     program = require('commander'),
     colors = require('colors'),
-    svmp = require('../lib/svmp'),
+    svmp = require(__dirname + '/../lib/svmp'),
     Table = require('cli-table');
 
 colors.setTheme({

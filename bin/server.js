@@ -19,10 +19,10 @@
  *
  */
 var
-    svmp = require('../lib/svmp'),
-    proxy = require('../lib/server/proxy'),
-    framedSocket = require('../lib/server/framedsocket'),
-    auth = require('../lib/authentication');
+    svmp = require(__dirname + '/../lib/svmp'),
+    proxy = require(__dirname + '/../lib/server/proxy'),
+    framedSocket = require(__dirname + '/../lib/server/framedsocket'),
+    auth = require(__dirname + '/../lib/authentication');
 
 svmp.init();
 
