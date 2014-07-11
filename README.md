@@ -2,6 +2,8 @@
 
 Serves as a basic TCP proxy between Android devices and Android VMs running in the cloud. Handles authentication, session management, and proxying messages.
 
+[![Build Status](https://travis-ci.org/SVMP/svmp-server.svg?branch=master)](https://travis-ci.org/SVMP/svmp-server)
+
 ## Setup
 
 ### Prerequisites
