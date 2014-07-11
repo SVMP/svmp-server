@@ -23,6 +23,11 @@
     "svmp-server": "./bin/server.js",
     "svmp-config": "./bin/cli.js"
   },
+  "scripts" : {
+    "test": "npm run test-config && npm run test-certs && grunt",
+    "test-config": "cp ./config/config-local-example.js ./config/config-local.js",
+    "test-certs": "./utils/generate_tls.sh"
+  },
   "dependencies": {
     "bytebuffer": "~2.3.1",
     "protobufjs": "~2.0.5",
