@@ -38,6 +38,8 @@ message Request
     PING          = 11; // client-initiated ping measurement (ms)
     TIMEZONE      = 12;
     APPS          = 13; // client request for available apps on the VM
+    KEYEVENT      = 14;
+    CONFIG        = 15;
   }
 
   optional AuthRequest authRequest = 2;
@@ -54,6 +56,8 @@ message Request
   optional VideoStreamInfo videoInfo = 12;
   optional string timezoneId = 13;
   optional AppsRequest apps = 14;
+  optional KeyEvent key = 15;
+  optional Config config = 16;
 }
 
 // Server to client message wrapper
@@ -436,9 +440,15 @@ message AppsRequest {
 
 // S->C
 message AppsResponse {
-  repeated AppInfo new     = 1; // list of apps to insert
-  repeated AppInfo updated = 2; // list of apps to update (changed name/icon?)
-  repeated string removed  = 3; // list of apps to remove (only pkgName needed)
+  enum AppsResponseType {
+    REFRESH = 1; // response to a REFRESH request
+    EXIT    = 2; // when the app has exited, this gets sent to the client
+  }
+
+  required AppsResponseType type = 1;
+  repeated AppInfo new           = 2; // list of apps to insert
+  repeated AppInfo updated       = 3; // list of apps to update (changed name/icon?)
+  repeated string removed        = 4; // list of apps to remove (only pkgName needed)
 }
 
 // C<->S
@@ -447,4 +457,26 @@ message AppInfo {
   required string appName = 2; // user-friendly name, ex: SVMP Client
   optional bytes icon     = 3; // null in Request
   optional bytes iconHash = 4; // null in Response
+}
+
+// C->S
+message KeyEvent {
+  required int64 eventTime   = 1;
+  required int32 deviceId    = 2;
+  required int32 flags       = 3;
+  // the following attributes are used whenever action is not ACTION_MULTIPLE, OR key code is not KEYCODE_UNKNOWN
+  optional int64 downTime    = 4;
+  optional int32 action      = 5;
+  optional int32 code        = 6;
+  optional int32 repeat      = 7;
+  optional int32 metaState   = 8;
+  optional int32 scanCode    = 9;
+  optional int32 source      = 10;
+   // this attribute is used for the special case of a ACTION_MULTIPLE event with key code of KEYCODE_UNKNOWN
+  optional string characters = 11;
+}
+
+// C->S
+message Config {
+  optional bool hardKeyboard = 1; // whether or not we have a hard keyboard attached
 }
