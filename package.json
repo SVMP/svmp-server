@@ -29,6 +29,7 @@
     "test-certs": "./utils/generate_tls.sh"
   },
   "dependencies": {
+    "svmp-user-model": "git+https://github.com/SVMP/svmp-user-model.git",
     "bytebuffer": "~2.3.1",
     "protobufjs": "~2.0.5",
     "q": "~1.0.1",

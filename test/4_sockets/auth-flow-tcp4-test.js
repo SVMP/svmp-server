@@ -121,7 +121,7 @@ describe("Test SVMP Server/Socket Authentication flow", function () {
                 authRequest: {
                     type: 'AUTHENTICATION',
                     username: 'dave',
-                    password: 'dave2' // we've passed the authentication test by now, so password has changed
+                    password: 'dave212345678' // we've passed the authentication test by now, so password has changed
                 }
             }));
         });

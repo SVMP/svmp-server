@@ -26,15 +26,6 @@ var
 
 describe("Authentication/Session logic spec", function () {
 
-    /*beforeEach(function (done) {
-        svmp.users.clearUsers(function () {
-            svmp.users.createUser('dave', 'dave', 'a', function () {
-                done();
-            });
-        });
-    });*/
-
-
     it('should contain one user', function (done) {
         svmp.users.listUsers(function (err, r) {
             assert.ok(r);
@@ -57,7 +48,7 @@ describe("Authentication/Session logic spec", function () {
             authRequest: {
                 type: 'AUTHENTICATION',
                 username: 'dave',
-                password: 'dave'
+                password: 'dave12345678'
             }
         };
 
@@ -81,7 +72,7 @@ describe("Authentication/Session logic spec", function () {
                 type: 'PASSWORD_CHANGE',
                 username: 'dave',
                 password: 'bad',
-                newPassword: 'dave2'
+                newPassword: 'dave12345678'
             }
         };
 
@@ -104,13 +95,12 @@ describe("Authentication/Session logic spec", function () {
             authRequest: {
                 type: 'PASSWORD_CHANGE',
                 username: 'dave',
-                password: 'dave',
-                newPassword: 'dave2'
+                password: 'dave12345678',
+                newPassword: 'dave212345678'
             }
         };
 
         var requestObj = svmp.protocol.parseRequest(svmp.protocol.writeRequest(protoMsg));
-
         a.authenticate(requestObj)
             .then(function (r) {
                 assert.ok(r.session.sid);
@@ -129,7 +119,7 @@ describe("Authentication/Session logic spec", function () {
             authRequest: {
                 type: 'AUTHENTICATION',
                 username: 'dave',
-                password: 'dave2'
+                password: 'dave212345678'
             }
         };
 
@@ -140,7 +130,11 @@ describe("Authentication/Session logic spec", function () {
             .then(function (r) {
                 assert.ok(r.session.sid);
                 assert.equal(r.user.username, 'dave');
-            }).then(done, done);
+                done();
+            }).fail(function (err) {
+                console.log("REASONG: ", err);
+                done();
+            });//then(done, done);
 
     });
 

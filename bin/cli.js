@@ -166,7 +166,7 @@ program
     });
 
 
-function addUser(un, pw, dev, callback) {
+function addUser(un, pw, email, dev, callback) {
     console.log('');
     console.log('Adding a new User...'.help);
     var images = svmp.config.get('settings:new_vm_defaults:images');
@@ -175,15 +175,15 @@ function addUser(un, pw, dev, callback) {
         svmp.shutdown();
     }
     else {
-        svmp.users.createUser(un, pw, dev, callback);
+        svmp.users.createUser(un, pw, email, dev, callback);
     }
 }
 
 program
-    .command('add <username> <password> <device_type>')
+    .command('add <username> <password> <email> <device_type>')
     .description('Add a User to system')
-    .action(function (un, pw, dev) {
-        addUser(un, pw, dev, function (err, user) {
+    .action(function (un, pw, email, dev) {
+        addUser(un, pw, email, dev, function (err, user) {
             if (user) {
                 console.log("        Created user: ", user.username, ' Password: ', user.password, ' Device: ', user.device_type);
                 console.log("");
@@ -195,10 +195,10 @@ program
     });
 
 program
-    .command('add-user-with-volume <username> <password> <device_type>')
+    .command('add-user-with-volume <username> <password> <email> <device_type>')
     .description('Add a new User to the system and create a volume for the User')
-    .action(function (un, pw, dev) {
-        addUser(un, pw, dev, function (err, user) {
+    .action(function (un, pw, email, dev) {
+        addUser(un, pw, email, dev, function (err, user) {
             if (user) {
                 console.log("Created user: ", user.username, ' Password: ', user.password, ' Device: ', user.device_type);
                 console.log("");
