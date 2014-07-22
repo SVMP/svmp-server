@@ -119,6 +119,8 @@ module.exports = {
 
         new_vm_defaults: {
             "images": {
+                // Mapping of cloud image ID to a friendly name. These are the names used by the
+                // configuration tool's add-user command.
                 // each device type should have its own name and image ID in key/value format, e.g.:
                 // "device_type": "imageID",
             },
@@ -132,9 +134,28 @@ module.exports = {
     },
     // Video Information sent from Proxy to Client
     webrtc: {
-        ice: { iceServers: [
-            {url: 'stun:127.0.0.1:3478'}
-        ]}, // change IP and port to match your STUN server
+        "ice": {
+            // Enter one or more servers to use for ICE NAT traversal
+            "iceServers": [
+		// Ex1: Unauthenticated STUN server
+                {
+                    "url": "stun:<stun server ip>:3478"
+                },
+                // Ex2: Password protected STUN server
+                {
+                    "url": "stun:<stun server ip>:3478",
+                    "password": "stun-credential"
+                },
+                // Ex3: TURN relay server (username & password required)
+                {
+                    "url": "turn:<turn server ip>:3478",
+                    "username": "turn-user",
+                    "password": "turn-password"
+                }
+            ]
+        },
+        // WebRTC constraints and paramenters that are sent to the peers.
+        // Don't change unless you know what you're doing.
         video: { audio: true, video: { mandatory: {}, optional: []}},
         pc: {optional: [
             {DtlsSrtpKeyAgreement: true}
