@@ -56,7 +56,7 @@ setInterval (
                 // obtain and remove the user's VM information, then destroy the VM
                 svmp.users.findUser(arg)
                     .then(svmp.users.removeUserVM)
-                    .then(svmp.openstack.destroyVM)
+                    .then(svmp.cloud.destroyVM)
                     .catch(printErr);
             }
         }, printErr );

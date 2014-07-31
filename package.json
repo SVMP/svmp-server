@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "svmp-user-model": "git+https://github.com/SVMP/svmp-user-model.git",
+    "aws-sdk": "~2.0.8",
     "bytebuffer": "~2.3.1",
     "protobufjs": "~2.0.5",
     "q": "~1.0.1",
