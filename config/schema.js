@@ -128,8 +128,12 @@ module.exports = {
                     "default": ["SENSOREVENT", "TOUCHEVENT"],
                     "type": "array"
                 },
+                "cloud_platform": {
+                    "default": "openstack",
+                    "enum": ["openstack", "aws"],
+                    "type": "string"
+                },
                 "openstack": {
-                    "required": true,
                     "type": "object",
                     "properties": {
                         "authUrl": {
@@ -154,6 +158,27 @@ module.exports = {
                             "type": "string"
                         },
                         "region": {
+                            "required": true,
+                            "type": "string"
+                        }
+                    }
+                },
+                "aws": {
+                    "type": "object",
+                    "properties": {
+                        "accessKeyId": {
+                            "required": true,
+                            "type": "string"
+                        },
+                        "secretAccessKey": {
+                            "required": true,
+                            "type": "string"
+                        },
+                        "region": {
+                            "required": true,
+                            "type": "string"
+                        },
+                        "availabilityZone": {
                             "required": true,
                             "type": "string"
                         }

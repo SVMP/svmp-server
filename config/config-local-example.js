@@ -95,8 +95,13 @@ module.exports = {
         // default = ['SENSOREVENT', 'TOUCHEVENT']
         log_request_filter: ['SENSOREVENT', 'TOUCHEVENT'],
 
+        // What cloud platform to use for launching VMs
+        // Valid values: openstack, aws
+        cloud_platform: "openstack",
+
         // Openstack cloud connection details
         openstack: {
+            // only required if 'cloud_platform' is set to 'openstack'
             "authUrl": "http://localhost:5000/",
             "username": "test",
             "password": "test",
@@ -105,16 +110,27 @@ module.exports = {
             "region": "RegionOne"
         },
 
+        // Amazon Web Services cloud connection details
+        aws: {
+            // only required if 'cloud_platform' is set to 'aws'
+            "accessKeyId": "",
+            "secretAccessKey": "",
+            "region": "us-east-1",
+            "availabilityZone": "us-east-1a"
+        },
+
         // VM/Volume defaults
-        // images: a map of device types to their respective image ids on the Openstack server.
-        // vmflavor: the number value (as a string) of the VM flavor. Ex: m1.tiny = '1', m1.small = '2'  See Openstack
-        //   for available values for your setup. Or run bin/spm image for a listing. Note: GUID values won't work.
+        // images: a map of device types to their respective image ids on the cloud server.
+        // vmflavor: the value (as a string) of the VM flavor. For AWS, this is the instance type.
+        //   OpenStack flavors must be a number, example: m1.tiny = '1', m1.small = '2'
+        //   AWS instance types must be a string, example: 't1.micro', 'm1.small'
+        //   Run 'bin/cli.js images' for a listing.
         // goldsnapshotId: the snapshot id to use for new volumes
-        // goldsnapshotSize: the integer size in GBs. THIS SHOULD BE SAME AS THE goldsnapshot SIZE
-        // use_floating_ip: if this is enabled, we assign a floating IP address to the VM when we start it. This is
-        //   necessary if the proxy server isn't running within Openstack itself.
-        // floating_ip_pool: if use_floating_ip is enabled, this can be optionally specified to tell Openstack what
-        //   ip pool to use when allocating new addresses
+        // goldsnapshotSize: only used for OpenStack; the integer size in GBs, SAME AS THE goldsnapshot SIZE.
+        // use_floating_ip: only used for OpenStack; if this is enabled, we assign a floating IP address to the VM when
+        //   we start it. This is necessary if the proxy server isn't running within Openstack itself.
+        // floating_ip_pool: only used for OpenStack; if use_floating_ip is enabled, this can be optionally specified to
+        //   tell Openstack what ip pool to use when allocating new addresses
         // pollintervalforstartup: this is the interval in milliseconds the apis to check for a running VM
 
         new_vm_defaults: {
@@ -137,7 +153,7 @@ module.exports = {
         "ice": {
             // Enter one or more servers to use for ICE NAT traversal
             "iceServers": [
-		// Ex1: Unauthenticated STUN server
+                // Ex1: Unauthenticated STUN server
                 {
                     "url": "stun:<stun server ip>:3478"
                 },
