@@ -240,7 +240,7 @@ program
         svmp.users.findUser({username: un})
             .then(function (user) {
                 // The user SHOULD NOT have a VM id or VM ip already set.
-                if (user.vm_id || user.vm_ip) {
+                if ((user.vm_id && user.vm_id.length > 0) || (user.vm_ip && user.vm_ip.length > 0)) {
                     throw new Error("User has VM or VM IP in record.");
                 } else {
                     return svmp.cloud.createAndStartVM(user, imageid, imageflvr)
