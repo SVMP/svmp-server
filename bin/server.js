@@ -21,8 +21,7 @@
 var
     svmp = require(__dirname + '/../lib/svmp'),
     proxy = require(__dirname + '/../lib/server/proxy'),
-    framedSocket = require(__dirname + '/../lib/server/framedsocket'),
-    auth = require(__dirname + '/../lib/authentication');
+    webSocket = require(__dirname + '/../lib/server/websocket');
 
 svmp.init();
 
@@ -36,32 +35,21 @@ var with_tls = svmp.config.get('settings:tls_proxy');
  */
 setInterval (
     function interval() {
-        // Get an array of all sessions whose VMs are expired
-        svmp.session.getExpiredVmSessions().then(function (obj) {
-            svmp.logger.debug("getExpiredVmSessions returned %d result(s)", obj.length);
-            // loop through each session in the collection:
-            for (var i = 0; i < obj.length; i++) {
-                // record the session information
-                var sess = obj[i],
-                    arg = {username : sess.username};
+        // TODO
+        svmp.logger.debug("Running session expiration check");
+        return;
 
-                // remove the session
-                sess.remove(function(err, result) {
-                    if (err)
-                        svmp.logger.error("Couldn't remove session: " + err);
-                    else
-                        svmp.logger.verbose("Removed session '%s'", result.sid)
-                });
-
-                // obtain and remove the user's VM information, then destroy the VM
-                svmp.users.findUser(arg)
-                    .then(svmp.users.removeUserVM)
-                    .then(svmp.cloud.destroyVM)
-                    .catch(printErr);
-            }
-        }, printErr );
+        // Get an array of all sessions past their expiration time
+        // svmp.session.getExpiredSessions().then(function (obj) {
+        //     svmp.logger.debug("getExpiredSessions returned %d result(s)", obj.length);
+        //     // loop through each session in the collection:
+        //     for (var i = 0; i < obj.length; i++) {
+        //         // remove the session
+        //         // call the API server to tell it that the user logged off
+        //     }
+        // }, printErr );
     },
-        svmp.config.get('settings:vm_check_interval') * 1000
+    svmp.config.get('settings:session_check_interval') * 1000
 );
 
 // helper function to pass to Q that prints messages from Error objects
@@ -69,24 +57,5 @@ function printErr(e) {
     svmp.logger.error(e.message);
 }
 
-function onConnection(socket) {
-    var authenticator;
-
-    if(svmp.config.useTlsCertAuth()) {
-        var cert = socket.getPeerCertificate();
-        if (socket.authorized) {
-            svmp.logger.verbose("Client presented certificate: " + JSON.stringify(cert, null, 2));
-            authenticator = auth.Authentication.loadStrategy(cert);
-        } else {
-            svmp.logger.error("User certificate failed validation: " + JSON.stringify(cert, null, 2));
-            authenticator = auth.Authentication.loadStrategy({});
-        }
-    } else {
-        authenticator = auth.Authentication.loadStrategy();
-    }
-
-    proxy.handleConnection(socket,authenticator);
-}
-
-framedSocket.createServer(undefined,onConnection).listen(port);
+webSocket.createServer(undefined,proxy.handleConnection).listen(port);
 svmp.logger.info('Proxy running on port %d Using TLS? %s',port,with_tls);

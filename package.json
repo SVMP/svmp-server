@@ -19,30 +19,31 @@
     "node": "0.10.2",
     "npm": "1.2"
   },
-  "bin" : {
+  "bin": {
     "svmp-server": "./bin/server.js",
     "svmp-config": "./bin/cli.js"
   },
-  "scripts" : {
+  "scripts": {
     "test": "npm run test-config && npm run test-certs && grunt",
     "test-config": "cp ./config/config-local-example.js ./config/config-local.js",
     "test-certs": "./utils/generate_tls.sh"
   },
   "dependencies": {
-    "svmp-user-model": "git+https://github.com/SVMP/svmp-user-model.git",
+    "JSV": "~4.0.2",
     "aws-sdk": "~2.0.8",
     "bytebuffer": "~2.3.1",
+    "cli-table": "~0.3.0",
+    "colors": "~0.6.2",
+    "commander": "~2.2.0",
+    "jsonwebtoken": "^0.4.1",
+    "jsvutil": "~0.0.1",
+    "pkgcloud": "git+https://github.com/SVMP/pkgcloud.git#0.9.4-svmp",
     "protobufjs": "~2.0.5",
     "q": "~1.0.1",
-    "mongoose": "3.8.3",
-    "commander": "~2.2.0",
-    "colors": "~0.6.2",
-    "pkgcloud": "git+https://github.com/SVMP/pkgcloud.git#0.9.4-svmp",
-    "JSV": "~4.0.2",
-    "jsvutil": "~0.0.1",
+    "svmp-user-model": "git+https://github.com/SVMP/svmp-user-model.git",
     "to-date": "latest",
     "winston": "~0.7.3",
-    "cli-table": "~0.3.0"
+    "ws": "^0.4.32"
   },
   "optionalDependencies": {
     "nan": "1.1.0",

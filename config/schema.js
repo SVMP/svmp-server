@@ -26,22 +26,8 @@ module.exports = {
             "required": true,
             "type": "object",
             "properties": {
-                "db": {
-                    "required": true,
-                    "type": "object",
-                    "properties": {
-                        "production": {
-                            "default": "mongodb://localhost/svmp_proxy_db",
-                            "type": "string"
-                        },
-                        "test": {
-                            "default": "mongodb://localhost/svmp_proxy_db_test",
-                            "type": "string"
-                        }
-                    }
-                },
                 "port": {
-                    "default": 8002,
+                    "default": 8080,
                     "minimum": 1,
                     "maximum": 65535,
                     "type": "number"
@@ -53,6 +39,10 @@ module.exports = {
                     "type": "number"
                 },
                 "tls_proxy": {
+                    "default": false,
+                    "type": "boolean"
+                },
+                "reverse_proxied": {
                     "default": false,
                     "type": "boolean"
                 },
@@ -76,12 +66,12 @@ module.exports = {
                     "default": "",
                     "type": "string"
                 },
+                "token_secret": {
+                    "required": true,
+                    "type": "string"
+                },
                 "max_session_length": {
                     "default": 21600,
-                    "type": "number"
-                },
-                "session_token_ttl": {
-                    "default": 300,
                     "type": "number"
                 },
                 "session_check_interval": {
@@ -96,25 +86,6 @@ module.exports = {
                     "default": 300,
                     "type": "number"
                 },
-                "use_pam": {
-                    "default": false,
-                    "type": "boolean"
-                },
-                "pam_service": {
-                    "default": "svmp",
-                    "type": "string"
-                },
-                "sendmail": {
-                    "default": false,
-                    "type": "boolean"
-                },
-                "smtp": {
-                    "type": "string"
-                },
-                "admincontact": {
-                    // TODO: add pattern validation for admincontact email address
-                    "type": "string"
-                },
                 "log_file": {
                     "default": "proxy_log.txt",
                     "type": "string"
@@ -128,95 +99,6 @@ module.exports = {
                     "default": ["SENSOREVENT", "TOUCHEVENT"],
                     "type": "array"
                 },
-                "cloud_platform": {
-                    "default": "openstack",
-                    "enum": ["openstack", "aws"],
-                    "type": "string"
-                },
-                "openstack": {
-                    "type": "object",
-                    "properties": {
-                        "authUrl": {
-                            "required": true,
-                            // TODO: add pattern validation for authUrl
-                            "type": "string"
-                        },
-                        "password": {
-                            "required": true,
-                            "type": "string"
-                        },
-                        "tenantId": {
-                            "required": true,
-                            "type": "string"
-                        },
-                        "tenantName": {
-                            "required": true,
-                            "type": "string"
-                        },
-                        "username": {
-                            "required": true,
-                            "type": "string"
-                        },
-                        "region": {
-                            "required": true,
-                            "type": "string"
-                        }
-                    }
-                },
-                "aws": {
-                    "type": "object",
-                    "properties": {
-                        "accessKeyId": {
-                            "required": true,
-                            "type": "string"
-                        },
-                        "secretAccessKey": {
-                            "required": true,
-                            "type": "string"
-                        },
-                        "region": {
-                            "required": true,
-                            "type": "string"
-                        },
-                        "availabilityZone": {
-                            "required": true,
-                            "type": "string"
-                        }
-                    }
-                },
-                "new_vm_defaults": {
-                    "required": true,
-                    "type": "object",
-                    "properties": {
-                        "images": {
-                            "required": true,
-                            "type": "object"
-                        },
-                        "vmflavor": {
-                            "required": true,
-                            "type": "string"
-                        },
-                        "goldsnapshotId": {
-                            "required": true,
-                            "type": "string"
-                        },
-                        "goldsnapshotSize": {
-                            "required": true,
-                            "type": "number"
-                        },
-                        "pollintervalforstartup": {
-                            "required": true,
-                            "type": "number"
-                        },
-                        "use_floating_ips": {
-                            "required": true,
-                            "type": "boolean"
-                        },
-                        "floating_ip_pool": {
-                            "type": "string"
-                        }
-                    }
-                }
             }
         },
         "webrtc": {
