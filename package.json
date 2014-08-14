@@ -30,24 +30,19 @@
   },
   "dependencies": {
     "JSV": "~4.0.2",
-    "aws-sdk": "~2.0.8",
     "bytebuffer": "~2.3.1",
     "cli-table": "~0.3.0",
     "colors": "~0.6.2",
     "commander": "~2.2.0",
     "jsonwebtoken": "^0.4.1",
     "jsvutil": "~0.0.1",
-    "pkgcloud": "git+https://github.com/SVMP/pkgcloud.git#0.9.4-svmp",
     "protobufjs": "~2.0.5",
     "q": "~1.0.1",
-    "svmp-user-model": "git+https://github.com/SVMP/svmp-user-model.git",
     "to-date": "latest",
     "winston": "~0.7.3",
     "ws": "^0.4.32"
   },
   "optionalDependencies": {
-    "nan": "1.1.0",
-    "authenticate-pam": "0.2.2"
   },
   "devDependencies": {
     "grunt": "latest",
