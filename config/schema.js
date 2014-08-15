@@ -32,12 +32,6 @@ module.exports = {
                     "maximum": 65535,
                     "type": "number"
                 },
-                "vm_port": {
-                    "default": 8001,
-                    "minimum": 1,
-                    "maximum": 65535,
-                    "type": "number"
-                },
                 "tls_proxy": {
                     "default": false,
                     "type": "boolean"
@@ -66,7 +60,21 @@ module.exports = {
                     "default": "",
                     "type": "string"
                 },
+                "rest_api_host": {
+                    "required": true,
+                    "type": "string"
+                },
+                "rest_api_port": {
+                    "default": 3000,
+                    "minimum": 1,
+                    "maximum": 65535,
+                    "type": "number"
+                },
                 "token_secret": {
+                    "required": true,
+                    "type": "string"
+                },
+                "svmp_auth_token": {
                     "required": true,
                     "type": "string"
                 },

@@ -38,6 +38,7 @@
     "jsvutil": "~0.0.1",
     "protobufjs": "~2.0.5",
     "q": "~1.0.1",
+    "q-io": "~1.11.4",
     "to-date": "latest",
     "winston": "~0.7.3",
     "ws": "^0.4.32"

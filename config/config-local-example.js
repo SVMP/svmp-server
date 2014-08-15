@@ -7,10 +7,6 @@ module.exports = {
         // default = 8002
         port: 8002,
 
-        // Port to connect to on Android VMs
-        // default = 8001
-        vm_port: 8001,
-
         // Enable SSL
         // default = false
         tls_proxy: true,
@@ -36,9 +32,18 @@ module.exports = {
         // only used if use_tls_user_auth == true
         tls_ca_cert: 'out/ca_cert.pem',
 
+        // Address of the SVMP REST API that we use to facilitate user VM setup.
+        rest_api_host: 'svmp-login.example.com',
+
+        // Port of the SVMP REST API.
+        rest_api_port: 3000,
+
         // Auth token verification string. A shared secret between the proxy and
         // login servers.
         token_secret: 'a long secret string',
+
+        // JSON web token to authenticate to the login server as an admin user.
+        svmp_auth_token: '0123456789abcdef',
 
         // Maximum length of a client session (in seconds) before it is
         // forcibly disconnected.
