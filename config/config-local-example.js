@@ -45,26 +45,6 @@ module.exports = {
         // JSON web token to authenticate to the login server as an admin user.
         svmp_auth_token: '0123456789abcdef',
 
-        // Maximum length of a client session (in seconds) before it is
-        // forcibly disconnected.
-        // default = 21600 [6 hours]
-        max_session_length: 21600,
-
-        // Interval (in seconds) of time to check for expired sessions.
-        // This is used while a connection is active.
-        // default = 60 [1 minute]
-        session_check_interval: 60,
-
-        // Maximum life span of an idle VM (in seconds) before it is expired and gets destroyed.
-        // This is used after a session is disconnected.
-        // default = 3600 [1 hour]
-        vm_idle_ttl: 3600,
-
-        // Interval (in seconds) of time to check for expired VMs.
-        // This is used after a session is disconnected.
-        // default = 300 [5 minutes]
-        vm_check_interval: 300,
-
         // Log file path
         // default = 'proxy_log.txt'
         log_file: 'proxy_log.txt',
@@ -77,7 +57,6 @@ module.exports = {
         // Protobuf request messages to filter out when using verbose logging
         // default = ['SENSOREVENT', 'TOUCHEVENT']
         log_request_filter: ['SENSOREVENT', 'TOUCHEVENT'],
-
     },
     // Video Information sent from Proxy to Client
     webrtc: {

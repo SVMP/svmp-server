@@ -78,22 +78,6 @@ module.exports = {
                     "required": true,
                     "type": "string"
                 },
-                "max_session_length": {
-                    "default": 21600,
-                    "type": "number"
-                },
-                "session_check_interval": {
-                    "default": 60,
-                    "type": "number"
-                },
-                "vm_idle_ttl": {
-                    "default": 3600,
-                    "type": "number"
-                },
-                "vm_check_interval": {
-                    "default": 300,
-                    "type": "number"
-                },
                 "log_file": {
                     "default": "proxy_log.txt",
                     "type": "string"
