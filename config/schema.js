@@ -60,17 +60,17 @@ module.exports = {
                     "default": "",
                     "type": "string"
                 },
-                "rest_api_host": {
+                "svmp_overseer_host": {
                     "required": true,
                     "type": "string"
                 },
-                "rest_api_port": {
+                "svmp_overseer_port": {
                     "default": 3000,
                     "minimum": 1,
                     "maximum": 65535,
                     "type": "number"
                 },
-                "token_secret": {
+                "svmp_overseer_cert": {
                     "required": true,
                     "type": "string"
                 },

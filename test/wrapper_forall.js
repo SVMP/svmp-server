@@ -23,11 +23,7 @@ var
 
 before(function(done){
     svmp.init();
-    svmp.users.clearUsers(function (err) {
-        svmp.users.createUser('dave', 'dave12345678', 'dave@here.com','a', function (err,r) {
-            done();
-        });
-    });
+    done();
 });
 
 after(function (done) {

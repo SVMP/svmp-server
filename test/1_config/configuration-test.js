@@ -25,17 +25,13 @@ var
 describe("Process configuration files", function () {
 
    it('read config information', function (done) {
-        assert.strictEqual('mongodb://localhost/svmp_proxy_db_test', svmp.config.get('settings:db:test'));
+        assert.strictEqual('proxy_log.txt', svmp.config.get('settings:log_file'));
 
         assert.strictEqual(undefined, svmp.config.get('settings:model:what'));
         done();
     });
 
     it('read booleans settings', function (done) {
-        assert(svmp.config.isDisabled('settings:use_pam'));
-
-        assert(svmp.config.isEnabled("webrtc:video:audio"));
-
         assert.equal(false, svmp.config.isEnabled('settings:port'));
 
         done();

@@ -25,8 +25,8 @@
   },
   "scripts": {
     "test": "npm run test-config && npm run test-certs && grunt",
-    "test-config": "cp ./config/config-local-example.js ./config/config-local.js",
-    "test-certs": "./utils/generate_tls.sh"
+    "test-config": "cp -R -u -p ./config/_config.local.template.js ./config/config-local.js",
+    "test-certs": "make -C tls/"
   },
   "dependencies": {
     "JSV": "~4.0.2",

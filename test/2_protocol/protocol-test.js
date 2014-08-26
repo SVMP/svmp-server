@@ -26,28 +26,27 @@ describe('Protocol Test', function () {
 
     it('should read/write request', function () {
         var obj1 = {
-            type: 'AUTH',
-            authRequest: {
-                type: 'AUTHENTICATION',
-                username: 'dave'
-            }
+            type: 'TIMEZONE',
+            timezoneId: 'EST'
         };
 
-        var result = svmp.protocol.parseRequest(svmp.protocol.writeRequest(obj1));
-        assert.strictEqual(result.authRequest.username, 'dave');
-        assert.equal(result.type, 'AUTH');
+        var result = svmp.protocol.parseRequestDelimited(svmp.protocol.writeRequest(obj1));
+        assert.strictEqual(result.timezoneId, 'EST');
+        assert.equal(result.type, 'TIMEZONE');
     });
 
     it('should read/write response', function () {
 
         var obj1 = {
-            type: 'VMREADY',
-            message: "test1"
+            type: 'WEBRTC',
+            webrtcMsg: {
+                json: "{'foo': 'bar'}"
+            }
         };
 
         var result = svmp.protocol.parseResponse(svmp.protocol.writeResponse(obj1));
-        assert.strictEqual(result.message, 'test1');
-        assert.equal(result.type, 'VMREADY');
+        assert.strictEqual(result.webrtcMsg.json, "{'foo': 'bar'}");
+        assert.equal(result.type, 'WEBRTC');
     });
 
 });
