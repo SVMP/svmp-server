@@ -18,169 +18,94 @@
  */
 
 module.exports = {
-    "$schema": "http://json-schema.org/draft-03/schema",
     "required": true,
     "type": "object",
     "properties": {
-        "settings": {
-            "required": true,
-            "type": "object",
-            "properties": {
-                "port": {
-                    "default": 8080,
-                    "minimum": 1,
-                    "maximum": 65535,
-                    "type": "number"
-                },
-                "tls_proxy": {
-                    "default": false,
-                    "type": "boolean"
-                },
-                "reverse_proxied": {
-                    "default": false,
-                    "type": "boolean"
-                },
-                "tls_certificate": {
-                    "default": "",
-                    "type": "string"
-                },
-                "tls_private_key": {
-                    "default": "",
-                    "type": "string"
-                },
-                "tls_private_key_pass": {
-                    "default": "",
-                    "type": "string"
-                },
-                "use_tls_user_auth": {
-                    "default": false,
-                    "type": "boolean"
-                },
-                "tls_ca_cert": {
-                    "default": "",
-                    "type": "string"
-                },
-                "svmp_overseer_host": {
-                    "required": true,
-                    "type": "string"
-                },
-                "svmp_overseer_port": {
-                    "default": 3000,
-                    "minimum": 1,
-                    "maximum": 65535,
-                    "type": "number"
-                },
-                "svmp_overseer_cert": {
-                    "required": true,
-                    "type": "string"
-                },
-                "svmp_auth_token": {
-                    "required": true,
-                    "type": "string"
-                },
-                "log_file": {
-                    "default": "proxy_log.txt",
-                    "type": "string"
-                },
-                "log_level": {
-                    "default": "info",
-                    "enum": ["silly", "debug", "verbose", "info", "warn", "error"],
-                    "type": "string"
-                },
-                "log_request_filter": {
-                    "default": ["SENSOREVENT", "TOUCHEVENT"],
-                    "type": "array"
-                },
-            }
+        "port": {
+            "minimum": 1,
+            "maximum": 65535,
+            "type": "number"
         },
+        // authentication options
+        "cert_user_auth": {
+            "type": "boolean"
+        },
+        "behind_reverse_proxy": {
+            "type": "boolean"
+        },
+        // ssl options
+        "enable_ssl": {
+            "type": "boolean"
+        },
+        "server_certificate": {
+            "type": "string"
+        },
+        "private_key": {
+            "type": "string"
+        },
+        "private_key_pass": {
+            "type": "string"
+        },
+        "ca_cert": {
+            "type": "string"
+        },
+        // overseer settings
+        "overseer_url": {
+            "required": true,
+            "type": "string"
+        },
+        "overseer_cert": {
+            "required": true,
+            "type": "string"
+        },
+        "auth_token": {
+            "required": true,
+            "type": "string"
+        },
+        // logging options
+        "log_file": {
+            "required": true,
+            "type": "string"
+        },
+        "log_level": {
+            "enum": ["silly", "debug", "verbose", "info", "warn", "error"],
+            "type": "string"
+        },
+        "log_request_filter": {
+            "type": "array"
+        },
+        // webrtc options
         "webrtc": {
             "required": true,
             "type": "object",
             "properties": {
-                "ice": {
+                "ice_servers": {
                     "required": true,
-                    "type": "object",
-                    "properties": {
-                        "iceServers": {
-                            "required": true,
-                            "minItems": 1,
-                            "type": "array",
-                            "items": {
+                    "minItems": 0,
+                    "type": "array",
+                    "items": {
+                        "required": true,
+                        "type": "object",
+                        "properties": {
+                            "url": {
                                 "required": true,
-                                "type": "object",
-                                "properties": {
-                                    "url": {
-                                        "required": true,
-                                        // TODO: add pattern validation for stun:host:port URL
-                                        "type": "string"
-                                    },
-                                    "username": {
-                                        "type": "string"
-                                    },
-                                    "password": {
-                                        "type": "string"
-                                    }
-                                }
+                                // TODO: add pattern validation for stun:host:port URL
+                                "type": "string"
+                            },
+                            "username": {
+                                "type": "string"
+                            },
+                            "password": {
+                                "type": "string"
                             }
                         }
                     }
                 },
                 "pc": {
-                    "default": {
-                        optional: [
-                            {
-                                DtlsSrtpKeyAgreement: true
-                            }
-                        ]
-                    },
                     "type": "object",
-                    "properties": {
-                        "optional": {
-                            "required": true,
-                            "minItems": 1,
-                            "type": "array",
-                            "items": {
-                                "required": true,
-                                "type": "object",
-                                "properties": {
-                                    "DtlsSrtpKeyAgreement": {
-                                        "required": true,
-                                        "type": "boolean"
-                                    }
-                                }
-                            }
-                        }
-                    }
                 },
                 "video": {
-                    "default": {
-                        audio: true,
-                        video: {
-                            mandatory: {},
-                            optional: []
-                        }
-                    },
                     "type": "object",
-                    "properties": {
-                        "audio": {
-                            "required": true,
-                            "type": "boolean"
-                        },
-                        "video": {
-                            "required": true,
-                            "type": "object",
-                            "properties": {
-                                "mandatory": {
-                                    "required": true,
-                                    "type": "object"
-                                },
-                                "optional": {
-                                    "required": true,
-                                    "type": "array"
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }

@@ -25,26 +25,26 @@
   },
   "scripts": {
     "test": "npm run test-config && npm run test-certs && grunt",
-    "test-config": "cp -R -u -p ./config/_config.local.template.js ./config/config-local.js",
+    "test-config": "cp ./config/_config.local.template.yaml ./config/config-local.yaml",
     "test-certs": "make -C tls/"
   },
   "dependencies": {
-    "JSV": "~4.0.2",
     "bytebuffer": "~2.3.1",
     "cli-table": "~0.3.0",
     "colors": "~0.6.2",
     "commander": "~2.2.0",
+    "js-yaml": "^3.2.1",
     "jsonwebtoken": "^0.4.1",
-    "jsvutil": "~0.0.1",
+    "nconf": "^0.6.9",
     "protobufjs": "~2.0.5",
     "q": "~1.0.1",
     "q-io": "~1.11.4",
+    "revalidator": "^0.2.0",
     "to-date": "latest",
     "winston": "~0.7.3",
     "ws": "^0.4.32"
   },
-  "optionalDependencies": {
-  },
+  "optionalDependencies": {},
   "devDependencies": {
     "grunt": "latest",
     "grunt-mocha-test": "latest",

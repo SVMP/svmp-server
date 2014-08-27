@@ -25,22 +25,22 @@ var
 describe("Process configuration files", function () {
 
    it('read config information', function (done) {
-        assert.strictEqual('proxy_log.txt', svmp.config.get('settings:log_file'));
+        assert.strictEqual('proxy_log.txt', svmp.config.get('log_file'));
 
-        assert.strictEqual(undefined, svmp.config.get('settings:model:what'));
+        assert.strictEqual(undefined, svmp.config.get('model:what'));
         done();
     });
 
     it('read booleans settings', function (done) {
-        assert.equal(false, svmp.config.isEnabled('settings:port'));
+        assert.equal(false, svmp.config.isEnabled('port'));
 
         done();
     });
 
     it('should allow changing config items', function (done) {
-        assert.strictEqual(svmp.config.get('settings:port'), 8002);
-        svmp.config.set('settings:port', 9000);
-        assert.strictEqual(svmp.config.get('settings:port'), 9000);
+        assert.strictEqual(svmp.config.get('port'), 8080);
+        svmp.config.set('port', 9000);
+        assert.strictEqual(svmp.config.get('port'), 9000);
         done();
     });
 });
