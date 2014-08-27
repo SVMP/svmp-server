@@ -22,7 +22,7 @@ var
 /** Wrapper for all tests */
 
 before(function(done){
-    svmp.init();
+    svmp.init('./test/config.yaml');
     done();
 });
 

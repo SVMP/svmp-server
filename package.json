@@ -24,8 +24,7 @@
     "svmp-config": "./bin/cli.js"
   },
   "scripts": {
-    "test": "npm run test-config && grunt",
-    "test-config": "cp ./config/_config.local.template.yaml ./config/config-local.yaml"
+    "test": "grunt"
   },
   "dependencies": {
     "bytebuffer": "~2.3.1",
