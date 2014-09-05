@@ -50,10 +50,6 @@ module.exports = {
             "type": "string"
         },
         // overseer settings
-        "overseer_url": {
-            "required": true,
-            "type": "string"
-        },
         "overseer_cert": {
             "required": true,
             "type": "string"
