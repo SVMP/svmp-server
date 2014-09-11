@@ -27,6 +27,7 @@ var
     program = require('commander'),
     colors = require('colors'),
     svmp = require(__dirname + '/../lib/svmp'),
+    http = require('q-io/http'),
     Table = require('cli-table');
 
 colors.setTheme({
@@ -178,22 +179,21 @@ function addUser(un, pw, email, dev, callback) {
     }
 }
 
-function addVolume(user) {
-    svmp.cloud.createVolumeForUser(user)
-        .then(function (info) {
-            return svmp.users.updateUser(info.user);
-        })
-        .then(function (u) {
-            console.log("    Volume created for: ", u.username);
+function addVolume(username) {
+    var params = svmp.config.getRestParams('services/cloud/volume/create', 'POST', {'username': username});
+    http.request(params)
+        .then(function (response) {
+            if (response.status != 200)
+                throw new Error("REST API rejected volume create request, code: " + response.status);
+        }).then(function (body) {
+            console.log("    Volume created for: ", username);
             console.log("    ... information saved to User's account ...");
             console.log("    NOTE: The Volume is NOT attached to the User's VM.");
             svmp.shutdown();
-        })
-        .catch(function (err) {
-            console.log("    ERROR creating volume for User ", JSON.stringify(err));
+        }).catch( function (err) {
+            console.log("    ERROR creating volume for User:", err.message);
             svmp.shutdown();
-        })
-        .done();
+        }).done();
 }
 
 program
@@ -318,13 +318,7 @@ program
         console.log('    Creating data volume for user ', un);
 
         // add the user's volume
-        svmp.users.findUser({username: un})
-            .then(addVolume)
-            .catch(function err() {
-                console.log("    ERROR: ", err.message);
-                svmp.shutdown();
-            })
-            .done();
+        addVolume(un);
     });
 
 program
@@ -374,18 +368,20 @@ program
     .description("List available images and flavors on your cloud platform. This information is needed when creating a VM")
     .action(function () {
 
-        console.log('');
-        console.log('Image flavors available'.help);
-
-        svmp.cloud.getFlavors(function (err, allflavors) {
-            if (err) {
-                console.log("ERROR: ", err);
-            } else {
+        var params = svmp.config.getRestParams('services/cloud/images');
+        http.request(params)
+            .then(function (response) {
+                if (response.status != 200)
+                    throw new Error("REST API rejected images request, code: " + response.status);
+                return response.body.read(); // this is a promise
+            }).then(function (body) {
+                console.log('');
+                console.log('Image flavors available'.help);
                 var flavorTable = new Table({
                     head: ['Name', 'ID']
                 });
-                for (i = 0; i < allflavors.length; i++) {
-                    var o = allflavors[i];
+                for (i = 0; i < body.flavors.length; i++) {
+                    var o = body.flavors[i];
                     flavorTable.push([o.name, o._id]);
                 }
                 console.log(flavorTable.toString());
@@ -394,32 +390,22 @@ program
                 console.log('');
 
                 console.log('Images available:'.help);
-                svmp.cloud.getImages(function (err, r) {
-                    if (r) {
-                        var imgTable = new Table({
-                            head: ['Name', 'ID']
-                        });
-                        for (i = 0; i < r.length; i++) {
-                            var o = r[i];
-                            imgTable.push([o.name, o._id]);
-                            //var s = "      *    ID: " + o._id + '  Name: ' + o.name;
-                            //console.log(s.verbose);
-                        }
-                        console.log(imgTable.toString());
-                        console.log('');
-                        svmp.shutdown();
-                    } else {
-
-                        console.log('Error: ', err);
-                        console.log('');
-                        svmp.shutdown();
-                    }
+                var imgTable = new Table({
+                    head: ['Name', 'ID']
                 });
-
-
-            }
-        });
-        //svmp.shutdown();
+                for (i = 0; i < body.images.length; i++) {
+                    var o = body.images[i];
+                    imgTable.push([o.name, o._id]);
+                    //var s = "      *    ID: " + o._id + '  Name: ' + o.name;
+                    //console.log(s.verbose);
+                }
+                console.log(imgTable.toString());
+                console.log('');
+                svmp.shutdown();
+            }).catch( function (err) {
+                console.log("    ERROR getting images:", err.message);
+                svmp.shutdown();
+            }).done();
     });
 
 
