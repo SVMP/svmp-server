@@ -1,7 +1,7 @@
-// svmp.proto 
+// svmp.proto
 // Client to Proxy Server protocol
 
-// Copyright (c) 2012-2013, The MITRE Corporation, All Rights Reserved.
+// Copyright (c) 2012-2014, The MITRE Corporation, All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,36 +24,32 @@ message Request
   required RequestType type = 1;
 
   enum RequestType {
-    AUTH          = 0;
-    VIDEO_PARAMS  = 1;
-    TOUCHEVENT    = 2;
-    SENSOREVENT   = 3;
-    LOCATION      = 4;
-    INTENT        = 5;
-    SCREENINFO    = 6;
-    VIDEO_START   = 7;
-    VIDEO_STOP    = 8;
-    WEBRTC        = 9;
-    ROTATION_INFO = 10;
-    PING          = 11; // client-initiated ping measurement (ms)
-    TIMEZONE      = 12;
-    APPS          = 13; // client request for available apps on the VM
-    KEYEVENT      = 14;
-    CONFIG        = 15;
+    VIDEO_PARAMS  = 0;
+    TOUCHEVENT    = 1;
+    SENSOREVENT   = 2;
+    LOCATION      = 3;
+    INTENT        = 4;
+    SCREENINFO    = 5;
+    WEBRTC        = 6;
+    ROTATION_INFO = 7;
+    PING          = 8; // client-initiated ping measurement (ms)
+    TIMEZONE      = 9;
+    APPS          = 10; // client request for available apps on the VM
+    KEYEVENT      = 11;
+    CONFIG        = 12;
   }
 
-  optional AuthRequest authRequest = 2;
-  optional VideoRequest videoRequest = 3;
+  // repeated to allow batching multiple events in a single message
+  repeated TouchEvent touch = 2;
+  repeated SensorEvent sensor = 3;
 
-  optional TouchEvent touch = 4;
-  optional SensorEvent sensor = 5;
   optional LocationRequest locationRequest = 6;
   optional Intent intent = 7;
 
   optional WebRTCMessage webrtcMsg = 9;
   optional RotationInfo rotationInfo = 10;
   optional Ping pingRequest = 11;
-  optional VideoStreamInfo videoInfo = 12;
+  optional VideoStreamInfo videoInfo = 12; // server->VM message
   optional string timezoneId = 13;
   optional AppsRequest apps = 14;
   optional KeyEvent key = 15;
@@ -65,29 +61,24 @@ message Response
 {
 
   enum ResponseType {
-    ERROR         = 0; // 'message' should contain a useful error string
+    ERROR         = 0;
     AUTH          = 1;
-    VMREADY       = 2; // 'message' should contain any extra info needed to contact the VM
+    VMREADY       = 2;
     SCREENINFO    = 3; // touch screen coordinate scaling info
-    VIDSTREAMINFO = 4; // Info client needs to start video (IPs, ports, ICE servers, webrtc stuff, etc.)
-    INTENT        = 5; // intent data in 'proxy'
-    NOTIFICATION  = 6; // notification data in 'proxy'
-    LOCATION      = 7; // location request
-    VIDEOSTART    = 8; // VideoPlayback status response
-    VIDEOSTOP     = 9;
-    VIDEOPAUSE    = 10;
-    WEBRTC        = 11; // WebRTC signalling message
-    PING          = 12; // response to client ping measurement (ms)
-    APPS          = 13; // response to client request for available apps
+    INTENT        = 4; // intent data in 'proxy'
+    NOTIFICATION  = 5; // notification data in 'proxy'
+    LOCATION      = 6; // location request
+    WEBRTC        = 7; // WebRTC signalling message
+    PING          = 8; // response to client ping measurement (ms)
+    APPS          = 9; // response to client request for available apps
   }
 
   required ResponseType type = 1;
-  optional string message = 2;
 
   optional AuthResponse authResponse = 3;
   optional Intent intent = 4;
   optional Notification notification = 5;
-  
+
   optional LocationResponse locationResponse = 6;
   optional Ping pingResponse = 7;
   optional AppsResponse apps = 8;
@@ -114,12 +105,12 @@ message Intent {
 
   //Encode all bundle extras as strings, and decode them later into specific data types
   repeated Tuple extras = 2;
-  
+
   //Correspond to optional Intent parameters
   optional string data = 3;
   repeated int32 flags = 4;
   repeated string categories = 5;
-  
+
   //For approximating a Java Map structure (Map<String,String>)
   message Tuple {
     required string key = 1;
@@ -149,7 +140,7 @@ message TouchEvent {
 
   optional int64 downTime = 3;
   optional int64 eventTime = 4;
-  repeated HistoricalEvent historical = 5; 
+  repeated HistoricalEvent historical = 5;
   optional int32 edgeFlags = 6;
 
   message PointerCoords {
@@ -199,17 +190,6 @@ message SensorEvent {
   repeated float values = 4;
 }
 
-// S->C: Sensor subscribe request, or update existing subscription
-message SensorSubscribe {
-  required SensorType type = 1;
-  optional int32 frequency = 2; // update frequency in Hz
-}
-
-// S->C: Unsubscribe from sensor update feed
-message SensorUnsubscribe {
-  required SensorType type = 1;
-}
-
 //=====================================================================
 // Location
 //=====================================================================
@@ -234,7 +214,7 @@ message LocationProviderStatus {
   required int32 status    = 2;
   //Encode all bundle extras as strings, and decode them later into specific data types
   repeated Tuple extras    = 3;
-  
+
   //For approximating a Java Map structure (Map<String,String>)
   message Tuple {
     required string key   = 1;
@@ -244,7 +224,7 @@ message LocationProviderStatus {
 
 // C->S: Location provider enabled update
 message LocationProviderEnabled {
-  required string provider = 1; 
+  required string provider = 1;
   required bool enabled    = 2;
 }
 
@@ -311,57 +291,18 @@ message LocationResponse {
 }
 
 //=====================================================================
-// Other
+// Auth
 //=====================================================================
-
-// C->S
-message AuthRequest {
-  required AuthRequestType type = 1;
-
-  enum AuthRequestType {
-    SESSION_TOKEN   = 0;
-    AUTHENTICATION  = 1; // any combination of auth input (password, security token, etc)
-    PASSWORD_CHANGE = 2;
-  }
-
-  required string username      = 2;
-  optional string sessionToken  = 3;
-  optional string password      = 4;
-  optional string securityToken = 5;
-  optional string newPassword   = 6; // only used with PASSWORD_CHANGE type
-}
 
 // S->C
 message AuthResponse {
   required AuthResponseType type = 1;
 
   enum AuthResponseType {
-    AUTH_OK              = 0; // sent in response to an AuthRequest
-    AUTH_FAIL            = 1; // sent in response to an AuthRequest
-    SESSION_MAX_TIMEOUT  = 2; // sent when the session times out
-    SESSION_IDLE_TIMEOUT = 3; // sent when the session times out
-    NEED_PASSWORD_CHANGE = 4; // sent when user needs to change their password
-    PASSWORD_CHANGE_FAIL = 5; // sent when a PASSWORD_CHANGE request auth fails
+    AUTH_FAIL            = 0; // sent in response to an AuthRequest
+    SESSION_MAX_TIMEOUT  = 1; // sent when the session times out
   }
 
-  optional SessionInfo sessionInfo = 2; // sent with an AUTH_OK message
-}
-
-message SessionInfo {
-  required string token = 1;      // randomly generated token identifier
-  required int32 maxLength = 2;   // max life in seconds of the session before it expires (server: max_session_length)
-  required int32 gracePeriod = 3; // time period in seconds that the session can reconnect (server: session_token_ttl)
-}
-
-// C->S
-message VideoRequest {
-  required string ip = 1;
-  required int32 port = 2;
-  optional int32 bitrate = 3;
-  // give the client a chance to request a video stream with particular parameters
-  // e.g., resolution, bitrate, FEC, etc.
-
-  // TODO
 }
 
 //=====================================================================
@@ -373,12 +314,6 @@ message VideoRequest {
 
 // See https://tools.ietf.org/html/draft-ietf-rtcweb-jsep-03
 
-// Things we won't implement in the first iteration but might be nice to have later on:
-// * ICE Trickling (3.4.1)
-// * Session Rehydration (3.6)
-// Together these might help speed up connection setup the first time and on
-// disconnect / reconnect.
-
 message WebRTCMessage {
 
   enum WebRTCType {
@@ -389,20 +324,7 @@ message WebRTCMessage {
   }
 
   optional WebRTCType type = 1;
-
-  // Much easier if we just pass the JSON string directly instead of deconstructing it
   optional string json = 2;
-
-
-  // offer/answer
-  // type := { 'answer', 'offer' };
-  //optional string type = 1;
-  //optional string sdp = 2;
-
-  // candidate
-  //optional string sdpMid = 3;       // might correspond with 'id' in apprtc demo
-  //optional int32 sdpMLineIndex = 4; // might correspond with 'label' in apprtc demo
-  //optional string candidate = 5;
 }
 
 // S->C
@@ -423,6 +345,10 @@ message VideoStreamInfo {
 message RotationInfo  {
   required int32 rotation = 1;
 }
+
+//=====================================================================
+// Other
+//=====================================================================
 
 // C<->S
 message Ping {
@@ -468,6 +394,10 @@ message AppInfo {
   optional bytes icon     = 3; // null in Request
   optional bytes iconHash = 4; // null in Response
 }
+
+//=====================================================================
+// Keyboard events
+//=====================================================================
 
 // C->S
 message KeyEvent {
