@@ -29,4 +29,9 @@ var port = svmp.config.get('port');
 var with_tls = svmp.config.get('enable_ssl');
 
 webSocket.createServer(undefined,proxy.handleConnection).listen(port);
-svmp.logger.info('Proxy running on port %d Using TLS? %s',port,with_tls);
+svmp.logger.info('Listening on port %d', port);
+if (with_tls) {
+    svmp.logger.info('SSL enabled using cert %s', svmp.config.get('server_certificate'));
+} else {
+    svmp.logger.info('SSL disabled');
+}
