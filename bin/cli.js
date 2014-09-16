@@ -27,7 +27,6 @@ var
     program = require('commander'),
     colors = require('colors'),
     svmp = require(__dirname + '/../lib/svmp'),
-    http = require('q-io/http'),
     Table = require('cli-table');
 
 colors.setTheme({
@@ -52,8 +51,9 @@ program
     .action(function () {
         console.log('');
         console.log('Proxy users:'.bold.help);
-        svmp.users.listUsers(function (err, list) {
-            if (list) {
+        svmp.overseerClient.listUsers(function (err, res) {
+            if (!badResponse(err, res)) {
+                var list = res.body.users;
                 var table = new Table({
                     head: ['User', 'VM_IP', 'VM_ID', 'VOL_ID', 'Device']
                 });
@@ -71,13 +71,11 @@ program
                         vm_id,
                         volume_id,
                         device
-
                     ]);
 
                 }
                 console.log(table.toString());
-            } else {
-                console.log('Error: ', err);
+                console.log('');
             }
             svmp.shutdown();
         });
@@ -88,16 +86,21 @@ program
     .description('List supported device types')
     .action(function () {
         console.log('');
-        console.log('Supported device types (settings.new_vm_defaults.images):'.bold.help);
-        var images = svmp.config.get('settings:new_vm_defaults:images');
-        var table = new Table({
-            head: ['Device Type']
+        console.log('Supported device types:'.bold.help);
+        svmp.overseerClient.listDevices(function (err, res) {
+            if (!badResponse(err, res)) {
+                var images = res.body;
+                var table = new Table({
+                    head: ['Device Type']
+                });
+                for (var key in images) {
+                    table.push([key]);
+                }
+                console.log(table.toString());
+                console.log('');
+            }
+            svmp.shutdown();
         });
-        for (var key in images) {
-            table.push([key]);
-        }
-        console.log(table.toString());
-        svmp.shutdown();
     });
 
 program
@@ -105,45 +108,15 @@ program
     .description('Clear the Users VM Information')
     .action(function (un) {
         console.log('');
-        svmp.users.findUser({username: un}).then(
-            function (user) {
-                // note: vm_ip and vm_id MUST be empty for the "setupuser" module to create a new VM when this user logs in
-                user.vm_ip = "";
-                user.vm_id = "";
-                return svmp.users.updateUser(user);
+        console.log('Clearing user information...'.bold.help);
+        var update = {vm_ip: "", vm_id: ""};
+        svmp.overseerClient.updateUser(un, update, function (err, res) {
+            if (!badResponse(err, res)) {
+                console.log('    Done! Cleared VM IP and VM ID for user:', un);
+                console.log('');
             }
-        ).then(function (u) {
-                console.log(u);
-                console.log('   User'.bold.help);
-                console.log('   ', JSON.stringify(u).data);
-                svmp.shutdown();
-            },
-            function (err) {
-                console.log("Error showing user " + e.message);
-                svmp.shutdown();
-            }
-        );
-    });
-
-program
-    .command('clear-session-info <username>')
-    .description('Clear the session information for a user')
-    .action(function (un) {
-        console.log('');
-        svmp.users.findUser({username: un})
-            .then(svmp.session.clearSessionsForUser)
-            .then(function (u) {
-                console.log('   WARNING: if using a cloud platform, this may result in idle VMs that will not be destroyed!');
-                console.log('   Cleared any sessions for:');
-                console.log('   User'.bold.help);
-                console.log('   ', JSON.stringify(u).data);
-                svmp.shutdown();
-            },
-            function (err) {
-                console.log("Error, " + e.message);
-                svmp.shutdown();
-            }
-        );
+            svmp.shutdown();
+        });
     });
 
 program
@@ -151,62 +124,28 @@ program
     .description('Show information about a user')
     .action(function (un) {
         console.log('');
-        svmp.users.findUser({username: un}).then(
-            function (user) {
-                console.log(user);
-                console.log('   User'.bold.help);
-                console.log('   ', JSON.stringify(user).data);
-                svmp.shutdown();
-            },
-            function (err) {
-                console.log("Error showing user ".error);
-                svmp.shutdown();
+        console.log('Finding user information...'.bold.help);
+        svmp.overseerClient.getUser(un, function (err, res) {
+            if (!badResponse(err, res)) {
+                var user = res.body.user;
+                console.log(JSON.stringify(user, null, 4).data);
+                console.log('');
             }
-        );
+            svmp.shutdown();
+        });
     });
-
-
-function addUser(un, pw, email, dev, callback) {
-    console.log('');
-    console.log('Adding a new User...'.help);
-    var images = svmp.config.get('settings:new_vm_defaults:images');
-    if (!dev || dev.length == 0 || !images.hasOwnProperty(dev)) {
-        console.log("    Problem creating user: device not recognized (run ./bin/cli devices to see available devices)".error);
-        svmp.shutdown();
-    }
-    else {
-        svmp.users.createUser(un, pw, email, dev, callback);
-    }
-}
-
-function addVolume(username) {
-    var params = svmp.config.getRestParams('services/cloud/volume/create', 'POST', {'username': username});
-    http.request(params)
-        .then(function (response) {
-            if (response.status != 200)
-                throw new Error("REST API rejected volume create request, code: " + response.status);
-        }).then(function (body) {
-            console.log("    Volume created for: ", username);
-            console.log("    ... information saved to User's account ...");
-            console.log("    NOTE: The Volume is NOT attached to the User's VM.");
-            svmp.shutdown();
-        }).catch( function (err) {
-            console.log("    ERROR creating volume for User:", err.message);
-            svmp.shutdown();
-        }).done();
-}
 
 program
     .command('add <username> <password> <email> <device_type>')
     .description('Add a User to system. NOTE: this does NOT create a volume for the User! (Use this command if you aren\'t using a cloud platform)')
     .action(function (un, pw, email, dev) {
-        addUser(un, pw, email, dev, function (err, user) {
-            if (user) {
-                console.log("    Created user: ", user.username, ' Password: ', user.password, ' Device: ', user.device_type);
-                console.log("    NOTE: The user does NOT have a volume assigned; use 'volume-create' command to do so.");
-                console.log("");
-            } else {
-                console.log("    Problem creating user: ", err);
+        console.log('');
+        console.log('Adding a new user...'.bold.help);
+        svmp.overseerClient.createUser(un, pw, email, dev, function (err, res) {
+            if (!badResponse(err, res)) {
+                console.log('    Done! Created user:', un);
+                console.log('    NOTE: The user does NOT have a volume assigned; use the "volume-create" command to do so'.warn);
+                console.log('');
             }
             svmp.shutdown();
         });
@@ -216,46 +155,43 @@ program
     .command('add-user-with-volume <username> <password> <email> <device_type>')
     .description('Add a new User to the system and create a volume for the User')
     .action(function (un, pw, email, dev) {
-        addUser(un, pw, email, dev, function (err, user) {
-            if (user) {
-                console.log("    Created user: ", user.username, ' Password: ', user.password, ' Device: ', user.device_type);
-                console.log("");
+        console.log('');
+        console.log('Adding a new user...'.bold.help);
+        svmp.overseerClient.createUser(un, pw, email, dev, function (err, res) {
+            if (!badResponse(err, res)) {
+                console.log('    Created user:', un);
+                console.log('');
 
                 // add the user's volume
-                addVolume(user);
+                svmp.overseerClient.createVolume(un, function (err, res) {
+                    if (!badResponse(err, res)) {
+                        console.log('    Volume created for:', un);
+                        console.log('    ... information saved to user\'s account ...');
+                        console.log('    NOTE: The Volume is NOT attached to the user\'s VM.'.warn);
+                        console.log('');
+                    }
+                    svmp.shutdown();
+                });
             } else {
-                console.log("    Problem creating user: ", err);
                 svmp.shutdown();
             }
         });
     });
 
 program
-    .command('vm <username> <image_id> <image_flavor>')
-    .description('Create and start a VM for a user in the system. See \'images\' command')
+    .command('vm <username>')
+    .description('Create and start a VM for a user in the system.')
     .action(function (un, imageid, imageflvr) {
         console.log('');
-        console.log('    Creating a VM for ', un, '... this may take a few seconds ...');
+        console.log('Creating a new VM, this may take a few seconds...'.bold.help);
 
-        svmp.users.findUser({username: un})
-            .then(function (user) {
-                // The user SHOULD NOT have a VM id or VM ip already set.
-                if ((user.vm_id && user.vm_id.length > 0) || (user.vm_ip && user.vm_ip.length > 0)) {
-                    throw new Error("User has VM or VM IP in record.");
-                } else {
-                    return svmp.cloud.createAndStartVM(user, imageid, imageflvr)
-                }
-            })
-            .then(svmp.users.updateUser)
-            .then(function (result) {
-                console.log("    VM created and running! IP: ", result.vm_ip);
-                svmp.shutdown();
-            },
-            function (err) {
-                console.log("    Error: ", err.message, "".error);
-                svmp.shutdown();
+        svmp.overseerClient.setupVM(un, function (err, res) {
+            if (!badResponse(err, res)) {
+                console.log('    Done! VM created and running, IP:', res.body.vm_ip);
+                console.log('');
             }
-        );
+            svmp.shutdown();
+        });
     });
 
 program
@@ -263,25 +199,16 @@ program
     .description('Register an existing VM at a given IP address to the user. (For testing/dev ONLY.)')
     .action(function (un, vmip) {
         console.log('');
-        console.log('    Adding existing VM for ', un);
+        console.log('Updating user\'s VM IP address...'.bold.help);
 
-        svmp.users.findUser({username: un})
-            .then(
-            function (user) {
-                user.vm_ip = vmip;
-                return svmp.users.updateUser(user);
-
-            })
-            .then(
-            function (user) {
-                console.log("    Success: Assigned IP to an existing VM");
-                svmp.shutdown();
-            },
-            function (err) {
-                console.log("    ERROR registering a vm for an IP ", err.message);
-                svmp.shutdown();
+        var update = {vm_ip: vmip, vm_id: ""};
+        svmp.overseerClient.updateUser(un, update, function (err, res) {
+            if (!badResponse(err, res)) {
+                console.log('    Done! Updated VM IP and cleared VM ID for user:', un);
+                console.log('');
             }
-        );
+            svmp.shutdown();
+        });
     });
 
 
@@ -289,24 +216,23 @@ program
     .command('list-volumes')
     .description('list available volumes')
     .action(function () {
+        console.log('');
+        console.log('Available volumes:'.bold.help);
 
-        svmp.cloud.getVolumes(function (err, r) {
-
-            if (err) {
-                console.log("    Problem listing volumes ", err.message);
-                svmp.shutdown();
-            } else {
+        svmp.overseerClient.listVolumes(function (err, res) {
+            if (!badResponse(err, res)) {
+                var r = res.body.volumes;
                 var table = new Table({
-                    head: ['Name', 'Status', 'ID'], colWidths: [20, 10, 40]
+                    head: ['Name', 'Status', 'ID']
                 });
 
                 for (var i = 0; i < r.length; i++) {
-                    var name = r[i].name || 'unk';
-                    table.push([ name, r[i].status, r[i].id]);
+                    table.push(r[i]);
                 }
                 console.log(table.toString());
-                svmp.shutdown();
+                console.log('');
             }
+            svmp.shutdown();
         });
     });
 
@@ -315,10 +241,18 @@ program
     .description('Create and assign a Volume to a user based on the gold snapshot id in config-local')
     .action(function (un) {
         console.log('');
-        console.log('    Creating data volume for user ', un);
+        console.log('Creating data volume for user...'.bold.help);
 
         // add the user's volume
-        addVolume(un);
+        svmp.overseerClient.createVolume(un, function (err, res) {
+            if (!badResponse(err, res)) {
+                console.log('    Done! Volume created for user:', un);
+                console.log('    ... information saved to user\'s account ...');
+                console.log('    NOTE: The Volume is NOT attached to the user\'s VM'.warn);
+                console.log('');
+            }
+            svmp.shutdown();
+        });
     });
 
 program
@@ -326,96 +260,97 @@ program
     .description('Does not attach Volume to VM, simply associates an existing user data volume with the specified user.')
     .action(function (un, volid) {
         console.log('');
-        console.log('    Associating volume ', volid, ' with user ', un);
-        svmp.users.findUser({username: un})
-            .then(function (user) {
-                user.volume_id = volid;
-                return svmp.users.updateUser(user);
-            })
-            .then(function (u) {
-                console.log("    Data volume associated with user! ID: ", u.volume_id);
-                svmp.shutdown();
-            })
-            .catch(function (err) {
-                console.log('    ERROR: ', err.message);
-                svmp.shutdown();
-            });
+        console.log('Associating volume with user...'.bold.help);
+
+        svmp.overseerClient.assignVolume(un, volid, function (err, res) {
+            if (!badResponse(err, res)) {
+                console.log('    Done! Updated volume ID for user:', un);
+                console.log('');
+            }
+            svmp.shutdown();
+        });
     });
 
 program
     .command('delete <username>')
-    .description("Delete a User from the Proxy")
+    .description('Delete a User from the Proxy')
     .action(function (un) {
-        console.log('    Delete a User:'.help);
-        svmp.users.findUser({username: un})
-            .then(
-            function (user) {
-                if (user) {
-                    user.remove();
-                    console.log('        Deleted: ', un);
-                    svmp.shutdown();
-                }
-            },
-            function (err) {
-                console.log('        Problem deleting user: ', un, ' reason: ', err);
-                svmp.shutdown();
+        console.log('');
+        console.log('Deleting user...'.bold.help);
+
+        svmp.overseerClient.deleteUser(un, function (err, res) {
+            if (!badResponse(err, res)) {
+                console.log('    Done!');
+                console.log('');
             }
-        );
+            svmp.shutdown();
+        });
     });
 
 program
     .command('images')
-    .description("List available images and flavors on your cloud platform. This information is needed when creating a VM")
+    .description('List available images and flavors on your cloud platform; this information is needed when creating a VM')
     .action(function () {
 
-        var params = svmp.config.getRestParams('services/cloud/images');
-        http.request(params)
-            .then(function (response) {
-                if (response.status != 200)
-                    throw new Error("REST API rejected images request, code: " + response.status);
-                return response.body.read(); // this is a promise
-            }).then(function (body) {
+        svmp.overseerClient.listImages(function (err, res) {
+            if (!badResponse(err, res)) {
                 console.log('');
-                console.log('Image flavors available'.help);
+                console.log('Image flavors available:'.bold.help);
                 var flavorTable = new Table({
                     head: ['Name', 'ID']
                 });
-                for (i = 0; i < body.flavors.length; i++) {
-                    var o = body.flavors[i];
-                    flavorTable.push([o.name, o._id]);
+                for (i = 0; i < res.body.flavors.length; i++) {
+                    var o = res.body.flavors[i];
+                    flavorTable.push([o[1], o[0]]);
                 }
                 console.log(flavorTable.toString());
                 console.log('');
-                console.log("NOTE: Use the ID value when choosing a Flavor".warn);
+                console.log('NOTE: Use the ID value when choosing a Flavor'.warn);
                 console.log('');
 
-                console.log('Images available:'.help);
+                console.log('Images available:'.bold.help);
                 var imgTable = new Table({
                     head: ['Name', 'ID']
                 });
-                for (i = 0; i < body.images.length; i++) {
-                    var o = body.images[i];
-                    imgTable.push([o.name, o._id]);
-                    //var s = "      *    ID: " + o._id + '  Name: ' + o.name;
-                    //console.log(s.verbose);
+                for (i = 0; i < res.body.images.length; i++) {
+                    var o = res.body.images[i];
+                    imgTable.push([o[1], o[0]]);
                 }
                 console.log(imgTable.toString());
                 console.log('');
-                svmp.shutdown();
-            }).catch( function (err) {
-                console.log("    ERROR getting images:", err.message);
-                svmp.shutdown();
-            }).done();
+            }
+            svmp.shutdown();
+        });
     });
 
 
 if (process.argv.length <= 2) {
     console.log('');
-    console.log('    Run:  ./bin/cli -h   to see available commands'.error);
+    console.log('    Run "node ./bin/cli -h" to see available commands'.error);
     console.log('');
     process.exit();
 } else {
     svmp.init();
 
     program.parse(process.argv);
+}
+
+// internal function
+// returns 'true' and logs if there is an error
+// returns 'false' if there is no error
+function badResponse(err, response) {
+    var errText;
+    if (err) {
+        errText = '    Error: ';
+    }
+    else if (response.status !== 200) {
+        errText = '    Error code: ' + response.status + ', text: ' + response.text;
+    }
+
+    if (errText) {
+        console.log(errText.error);
+        console.log('');
+        return true;
+    }
+    return false;
 }

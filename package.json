@@ -36,8 +36,8 @@
     "nconf": "^0.6.9",
     "protobufjs": "~2.0.5",
     "q": "~1.0.1",
-    "q-io": "~1.11.4",
     "revalidator": "^0.2.0",
+    "svmp-overseer-client": "git+https://github.com/SVMP/svmp-overseer-client.git",
     "to-date": "latest",
     "winston": "~0.7.3",
     "ws": "^0.4.32"
