@@ -20,17 +20,13 @@
     "npm": "1.2"
   },
   "bin": {
-    "svmp-server": "./bin/server.js",
-    "svmp-config": "./bin/cli.js"
+    "svmp-server": "./bin/server.js"
   },
   "scripts": {
     "test": "grunt"
   },
   "dependencies": {
     "bytebuffer": "~2.3.1",
-    "cli-table": "~0.3.0",
-    "colors": "~0.6.2",
-    "commander": "~2.2.0",
     "js-yaml": "^3.2.1",
     "jsonwebtoken": "^0.4.1",
     "nconf": "^0.6.9",
