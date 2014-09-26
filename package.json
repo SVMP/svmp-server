@@ -1,7 +1,7 @@
 {
   "name": "svmp-server",
   "description": "SVMP Proxy Server",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "license": "Apache-2.0",
   "url": "https://github.com/SVMP/svmp-server",
   "repository": {
@@ -33,7 +33,7 @@
     "protobufjs": "~2.0.5",
     "q": "~1.0.1",
     "revalidator": "^0.2.0",
-    "svmp-overseer-client": "git+https://github.com/SVMP/svmp-overseer-client.git",
+    "svmp-overseer-client": "git+https://github.com/SVMP/svmp-overseer-client.git#svmp-2.0.0",
     "to-date": "latest",
     "winston": "~0.7.3",
     "ws": "^0.4.32"

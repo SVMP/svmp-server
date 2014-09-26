@@ -7,21 +7,14 @@ Serves as a basic TCP proxy between Android devices and Android VMs running in t
 ## Setup
 
 ### Prerequisites
-* Install [Node.js](http://nodejs.org)
-
-#### Windows only
-* Install [Git for Windows](http://msysgit.github.io/)
-* Install [Python 2.7.6](https://www.python.org/download/releases/2.7.6/)
-
-Additionally, on Windows, do the following *in order:*
-
-* Install [Visual Studio 2010](http://www.microsoft.com/visualstudio/eng/downloads#d-2010-express)
-* Install [Windows SDK 7.1](http://www.microsoft.com/en-us/download/details.aspx?id=8279)
-* Install [Visual Studio 2010 SP1](http://www.microsoft.com/en-us/download/details.aspx?id=23691)
-* Install [Visual C++ 2010 SP1 Compiler Update for the Windows SDK 7.1](http://www.microsoft.com/en-us/download/details.aspx?id=4422)
+* Install [Node.js](http://nodejs.org) 0.10.x
 
 ### Install Steps
-1. Download this project
+
+1. Download the project code
+```sh
+$ git clone https://github.com/SVMP/svmp-server
+```
 2. Within the root directory of this project, run this command to install the project and download dependencies:
 ```sh
 $ npm install
@@ -29,55 +22,24 @@ $ npm install
 
 ### Configuration
 
-1. Within the root directory of this project, run this command to create a new config file using the template:
-```sh
-$ npm run test-config
-```
-
-2. Review the various fields in *config/config-local.js* and set them to match your configuration
+1. Make a copy of the config file template from `config/_config.local.template.yaml` to either `config/config-local.yaml` or another location of your choosing. If you choose a custom location, make sure to use the `--config` option when running the server.
+2. Review the various fields in *config/config-local.js* and set them to match your configuration based on the descriptions in the comments.
 3. Make sure to add your SVMP Overseer information in `svmp_overseer_host`, `svmp_overseer_port`, and `svmp_overseer_cert`.
-
-#### Enable TLS
-
-If you don't have your own CA and you want to use TLS, follow these steps to generate a CA certificate, server certificate, and server private key:
-
-1. Make sure you have the Java JDK installed
-2. Open the *tls/Makefile* script and change the preset password for the server key:
-```
-SERVER_PASSPHRASE := changeme_password
-```
-
-3. Open the *tls/ca.cnf* and *tls/server.cnf* files and configure them to your liking
-4. Run the script from the root directory of the project to generate certificates in the *tls* directory:
-```sh
-$ make -C tls/
-```
-
-5. In *config/config-local.js*, set the `tls_certificate`, `tls_private_key`, and `tls_private_key_pass` values to match your server certificate, private key, and password
 
 ### Running the Proxy Server
 
-1. Start MongoDB
+1. Ensure the [SVMP Overseer](https://github.com/SVMP/svmp-overseer) is installed and running
 2. Start the proxy:
 ```sh
-$ node bin/server.js
+$ node bin/server.js [--config=<path to config file>]
 ```
 
-### Adding Users and VMs
-
-* Run the commandline client from the root directory of the project:
-```sh
-$ node bin/cli.js -h
-```
-
-    Run the help command to see a list of all commands
-
-### Running Grunt unit tests
+### Running Unit Tests
 
 * Install Grunt's command line interface globally, then execute the Grunt task runner
 ```sh
 $ npm install -g grunt-cli
-$ grunt
+$ npm test
 ```
 
 ## License
